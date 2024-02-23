@@ -51,12 +51,12 @@ elseif(WIN32)
 		based on your install directories
 	]]
 	target_include_directories(vulkan-triangle PRIVATE
-		C:/VulkanSDK/1.2.176.1/Include
-		C:/glfw/include)
+		C:/VulkanSDK/1.2.182.0/Include
+			C:/src/GLFW/include)
 
 	target_link_libraries(vulkan-triangle
-		C:/VulkanSDK/1.2.176.1/Lib/vulkan-1.lib
-		C:/glfw/lib-mingw-w64/libglfw3dll.a)
+		C:/VulkanSDK/1.2.182.0/Lib/vulkan-1.lib
+		C:/src/GLFW/lib-mingw-w64/libglfw3dll.a)
 		# if you're using Visual C++ 2019, add '#' to the line above
 		# and delete '#' from the line below
 		#C:/glfw/lib-vc2019/libglfw3dll.a)
@@ -94,7 +94,7 @@ if(WIN32)
 		modify the path to glfw3.dll to your own path
 	]]
 	add_custom_target(glfw3.dll
-		COMMAND ${CMAKE_COMMAND} -E copy C:/glfw/lib-mingw-w64/glfw3.dll ${CMAKE_BINARY_DIR}/)
+		COMMAND ${CMAKE_COMMAND} -E copy C:/src/GLFW/lib-mingw-w64/glfw3.dll ${CMAKE_BINARY_DIR}/)
 		# if you're using Visual C++ 2019, add '#' to the line above
 		# and delete '#' from the line below
 		#COMMAND ${CMAKE_COMMAND} -E copy C:/glfw/lib-vc2019/glfw3.dll ${CMAKE_BINARY_DIR}/Debug/)

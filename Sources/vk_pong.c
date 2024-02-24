@@ -2,19 +2,24 @@
 #include <stdlib.h>
 #include <signal.h>
 
-#include "../Headers/std_c.h"
-#include "../Headers/ext.h"
-#include "../Headers/vk_fun.h"
-#include "../Headers/glfw_fun.h"
+#include "std_c.h"
+#include "ext.h"
+#include "vk_fun.h"
+#include "glfw_fun.h"
 
 void signal_handler(int signal) {
     if(signal == SIGTERM){
-        printf("End singla received : %d, program shutdown!\n", signal);
+        log_write("End signal received : %d, program shutdown!", signal);
         exit(1);
     }
 }
+LogLevel logLevel;
+FILE * console;
 
-int main() {
+int main(int argc, char * argv[]) {
+
+    logLevel =QUIET;
+    log_process_args(argc, argv);
     signal(SIGTERM, signal_handler);
     glfwInit();
 
@@ -61,7 +66,7 @@ int main() {
     // Si notre physical device supporte la surface on continue, sinon impossible d'utiliser Vulkan
     VkBool32 surfaceSupported = getSurfaceSupport(&surface, pBestPhysicalDevice, bestGraphicsQueueFamilyindex);
     if (!surfaceSupported) {
-        printf("vulkan surface not supported!\n");
+        log_write("vulkan surface not supported!");
 
         // Ménage des références existantes
         deleteSurface(&surface, &instance);
@@ -116,7 +121,7 @@ int main() {
     char *vertexShaderCode = getShaderCode(vertexShaderFileName, &vertexShaderSize);
     // Sortir du programme si le chargement a echoué
     if (vertexShaderCode == VK_NULL_HANDLE) {
-        printf("VkShaderException : vertex %s shader not found!", vertexShaderFileName);
+        log_write("VkShaderException : vertex %s shader not found!", vertexShaderFileName);
 
         deleteFramebuffers(&device, &framebuffers, swapchainImageNumber);
         deleteRenderPass(&device, &renderPass);
@@ -140,7 +145,7 @@ int main() {
     char *fragmentShaderCode = getShaderCode(fragmentShaderFileName, &fragmentShaderSize);
     // Sortir du programme si le chargement a echoué
     if (fragmentShaderCode == VK_NULL_HANDLE) {
-        printf("VkShaderException : fragment shader %s not found", fragmentShaderFileName);
+        log_write("VkShaderException : fragment shader %s not found", fragmentShaderFileName);
 
         deleteShaderModule(&device, &vertexShaderModule);
         deleteShaderCode(&vertexShaderCode);

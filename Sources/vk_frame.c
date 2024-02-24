@@ -1,4 +1,4 @@
-#include "../Headers/vk_fun.h"
+#include "vk_fun.h"
 
 VkRenderPass createRenderPass(VkDevice *pDevice, VkSurfaceFormatKHR *pFormat){
 	VkAttachmentDescription attachmentDescription = {

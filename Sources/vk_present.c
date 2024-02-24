@@ -1,5 +1,5 @@
-#include "../Headers/glfw_fun.h"
-#include "../Headers/vk_fun.h"
+#include "glfw_fun.h"
+#include "vk_fun.h"
 
 void presentImage(VkDevice *pDevice, GLFWwindow *window, VkCommandBuffer *pCommandBuffers, VkFence *pFrontFences, VkFence *pBackFences, VkSemaphore *pWaitSemaphores, VkSemaphore *pSignalSemaphores, VkSwapchainKHR *pSwapchain, VkQueue *pDrawingQueue, VkQueue *pPresentingQueue, uint32_t maxFrames){
 	uint32_t currentFrame = 0;

@@ -1,4 +1,4 @@
-#include "../Headers/vk_fun.h"
+#include "vk_fun.h"
 
 VkPipelineLayout createPipelineLayout(VkDevice *pDevice){
 	VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {

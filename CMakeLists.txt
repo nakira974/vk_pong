@@ -5,16 +5,23 @@ project(Vulkan\ Triangle)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
+find_file(console NAMES "${CMAKE_CURRENT_BINARY_DIR}/console.log")
+if(console)
+	file(ARCHIVE_CREATE INPUT console.tar "${CMAKE_CURRENT_BINARY_DIR}/console.log")
+else ()
+	file(TOUCH "${CMAKE_CURRENT_BINARY_DIR}/console.log")
+endif ()
 set(GLFW_BASE_PATH C:/src/GLFW)
 set(VULKAN_BASE_PATH C:/VulkanSDK/1.2.182.0)
 
 file(GLOB_RECURSE HEADERS_FILES
-		${PROJECT_SOURCE_DIR}/headers/*.h
+		${PROJECT_SOURCE_DIR}/Headers/*.h
 		${PROJECT_SOURCE_DIR}/headers/*.inl
 )
 file(GLOB_RECURSE SOURCES_FILES
 		${PROJECT_SOURCE_DIR}/Sources/*.c
 )
+include_directories(${PROJECT_SOURCE_DIR}/Headers)
 
 add_executable(vulkan-triangle ${SOURCES_FILES})
 

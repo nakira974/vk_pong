@@ -9,6 +9,7 @@
 
 #include "std_c.h"
 #include "ext.h"
+#include "log.h"
 
 /**
  * @brief Create a Vulkan instance to link current application with API

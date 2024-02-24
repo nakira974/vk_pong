@@ -1,4 +1,4 @@
-#include "../Headers/vk_fun.h"
+#include "vk_fun.h"
 
 uint32_t getPhysicalDeviceNumber(VkInstance *pInstance){
 	uint32_t physicalDeviceNumber = 0;

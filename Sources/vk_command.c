@@ -1,4 +1,4 @@
-#include "../Headers/vk_fun.h"
+#include "vk_fun.h"
 
 VkCommandPool createCommandPool(VkDevice *pDevice, uint32_t queueFamilyIndex){
 	VkCommandPoolCreateInfo commandPoolCreateInfo = {

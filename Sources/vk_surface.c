@@ -1,5 +1,5 @@
-#include "../Headers/vk_fun.h"
-#include "../Headers/glfw_fun.h"
+#include "vk_fun.h"
+#include "glfw_fun.h"
 
 GLFWwindow *createVulkanWindow(int width, int height, const char *title){
 	glfwWindowHint(GLFW_CLIENT_API,GLFW_NO_API);

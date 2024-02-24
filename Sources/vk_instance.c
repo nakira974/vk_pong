@@ -1,5 +1,5 @@
 #include <setjmp.h>
-#include "../Headers/vk_fun.h"
+#include "vk_fun.h"
 
 jmp_buf exitJump;
 
@@ -48,9 +48,38 @@ VkInstance createInstance(const char * app_name, uint32_t app_version, const cha
 
         VkInstance instance;
         if(vkCreateInstance(&instanceCreateInfo, VK_NULL_HANDLE, &instance) != VK_SUCCESS){
-            printf("VkInstanceException : Error while creating vulkan instance\n");
+            log_write("VkInstanceException : Error while creating vulkan instance!");
             instance_exception();
         };
+
+        if(logLevel>QUIET){
+            if (setjmp(exitJump) == 0) {
+                uint32_t extension_count = 0;
+                vkEnumerateInstanceExtensionProperties(VK_NULL_HANDLE, &extension_count, VK_NULL_HANDLE);
+                VkExtensionProperties  *extensionProperties;
+                if((extensionProperties = (VkExtensionProperties*) malloc(extension_count * sizeof(VkExtensionProperties))) == NULL){
+                    free(extensionProperties);
+                    log_write("VkExtensionException : Error while allocating extension properties default array!");
+                    instance_exception();
+                }
+
+                if(vkEnumerateInstanceExtensionProperties(VK_NULL_HANDLE, &extension_count, extensionProperties) != VK_SUCCESS){
+                    free(extensionProperties);
+                    printf("VkExtensionException : Error while allocating extension properties with Vulkan!\n");
+                    instance_exception();
+                };
+
+                log_write("Available extensions :");
+
+                for(int i =0;i<extension_count;i++){
+                    log_write("-- Extension n°%d : %s", i+1, extensionProperties[i].extensionName);
+                }
+
+            }
+
+        }
+
+
         return instance;
     }
     return VK_NULL_HANDLE;

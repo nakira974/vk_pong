@@ -1,4 +1,4 @@
-#include "../Headers/vk_fun.h"
+#include "vk_fun.h"
 
 VkSemaphore *createSemaphores(VkDevice *pDevice, uint32_t maxFrames){
 	VkSemaphoreCreateInfo semaphoreCreateInfo = {

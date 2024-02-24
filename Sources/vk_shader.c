@@ -1,4 +1,4 @@
-#include "../Headers/vk_fun.h"
+#include "vk_fun.h"
 
 char *getShaderCode(const char *fileName, uint32_t *pShaderSize){
 	if(pShaderSize == VK_NULL_HANDLE){

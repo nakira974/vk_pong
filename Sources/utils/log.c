@@ -4,6 +4,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
+#include <pthread.h>
 #include "log.h"
 void to_lower_case(char* str){
     size_t length = strlen(str);
@@ -41,14 +42,27 @@ void log_process_args(int argc, char * argv[]){
 }
 
 void log_write(const char *caller, const char *message){
+    pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+    pthread_mutex_lock(&mutex);
+
+    // Critical section
     console = fopen("console.log", "a");
+    // Critical section End
+    pthread_mutex_unlock(&mutex);
+
     if(console != NULL){
         time_t  dateTimeNow;
         time(&dateTimeNow);
         struct tm *localTime = localtime(&dateTimeNow);
         char dateTimeString[80];
         strftime(dateTimeString, sizeof(dateTimeString), "%Y-%m-%d %H:%M:%S", localTime);
+
+        // Critical section
+        pthread_mutex_lock(&mutex);
         fprintf(console,  "[%s]\t%s \t%s\n",dateTimeString,caller, message);
+        // Critical section End
+        pthread_mutex_unlock(&mutex);
+
         fclose(console);
     }
 }

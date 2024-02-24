@@ -15,12 +15,16 @@
  */
 typedef enum {
     QUIET,
-    TRACE,
-    INFO,
-    WARN,
+    FATAL,
     ERR,
-    FATAL
+    WARN,
+    INFO,
+    DEBUG,
+    TRACE,
 } LogLevel;
+
+
+
 
 /**
  * Global log level variable for our app, MUST be called in your main program file
@@ -31,6 +35,13 @@ extern LogLevel logLevel;
  * Main program output rolling file
  */
 extern FILE *   console;
+
+/**
+ * @brief Convert a LogLevel to string
+ * @param level The log level to be converted into string
+ * @return The given log level as string
+ */
+const char * log_level_toString(LogLevel);
 
 /**
  * @brief Map the log level with program arguments
@@ -45,5 +56,5 @@ void log_process_args(int argc, char * argv[]);
  * @param console Target console where to write the message
  * @param message Message to be written
  */
-void log_write(const char *caller, const char *message);
+void log_write(LogLevel level, const char *caller, const char *message);
 #endif //VULKAN_TRIANGLE_LOG_H

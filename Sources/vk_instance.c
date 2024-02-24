@@ -48,7 +48,7 @@ VkInstance createInstance(const char * app_name, uint32_t app_version, const cha
 
         VkInstance instance;
         if(vkCreateInstance(&instanceCreateInfo, VK_NULL_HANDLE, &instance) != VK_SUCCESS){
-            log_write("vk_instance", "VkInstanceException : Error while creating vulkan instance!");
+            log_write(FATAL, "vk_instance", "VkInstanceException : Error while creating vulkan instance!");
             instance_exception();
         };
 
@@ -59,23 +59,23 @@ VkInstance createInstance(const char * app_name, uint32_t app_version, const cha
                 VkExtensionProperties  *extensionProperties;
                 if((extensionProperties = (VkExtensionProperties*) malloc(extension_count * sizeof(VkExtensionProperties))) == NULL){
                     free(extensionProperties);
-                    log_write("vk_instance", "VkExtensionException : Error while allocating extension properties default array!");
+                    log_write(ERR,"vk_instance", "VkExtensionException : Error while allocating extension properties default array!");
                     instance_exception();
                 }
 
                 if(vkEnumerateInstanceExtensionProperties(VK_NULL_HANDLE, &extension_count, extensionProperties) != VK_SUCCESS){
                     free(extensionProperties);
-                    log_write("vk_instance", "VkExtensionException : Error while allocating extension properties with Vulkan!");
+                    log_write(ERR, "vk_instance", "VkExtensionException : Error while allocating extension properties with Vulkan!");
                     instance_exception();
                 };
 
-                log_write("vk_instance", "Available extensions :");
+                log_write(DEBUG, "vk_instance", "Available extensions :");
 
 
                 for(int i =0;i<extension_count;i++){
                     char line_buffer[256];
                     sprintf(line_buffer,"Extension n°%d : %s", i+1, extensionProperties[i].extensionName);
-                    log_write("vk_instance", line_buffer);
+                    log_write(DEBUG, "vk_instance", line_buffer);
                 }
 
             }

@@ -6,6 +6,15 @@
 #include <time.h>
 #include <pthread.h>
 #include "log.h"
+
+
+
+const char * log_level_toString(LogLevel level){
+    const char * log_levels[] = {"Quiet", "Fatal", "Error", "Warning", "Info", "Debug", "Trace"};
+    return log_levels[level];
+}
+
+
 void to_lower_case(char* str){
     size_t length = strlen(str);
 
@@ -36,33 +45,33 @@ void log_process_args(int argc, char * argv[]){
                 else if (strcmp(argv[i+1], "fatal") == 0){
                     logLevel = FATAL;
                 }
+                else if (strcmp(argv[i+1], "debug") == 0){
+                    logLevel = DEBUG;
+                }
             }
         }
     }
 }
 
-void log_write(const char *caller, const char *message){
-    pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-    pthread_mutex_lock(&mutex);
+void log_write(LogLevel level, const char *caller, const char *message){
+    if(level<=logLevel){
+        pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+        console = fopen("console.log", "a");
+        if(console != NULL){
+            time_t  dateTimeNow;
+            time(&dateTimeNow);
+            struct tm *localTime = localtime(&dateTimeNow);
+            char dateTimeToString[80];
+            strftime(dateTimeToString, sizeof(dateTimeToString), "%Y-%m-%d %H:%M:%S", localTime);
 
-    // Critical section
-    console = fopen("console.log", "a");
-    // Critical section End
-    pthread_mutex_unlock(&mutex);
+            // Critical section
+            pthread_mutex_lock(&mutex);
+            const char* levelToString = log_level_toString(level);
+            fprintf(console, "[%s]\t [%s]\t %s\t %s\n", dateTimeToString, levelToString, caller, message);
+            // Critical section End
+            pthread_mutex_unlock(&mutex);
 
-    if(console != NULL){
-        time_t  dateTimeNow;
-        time(&dateTimeNow);
-        struct tm *localTime = localtime(&dateTimeNow);
-        char dateTimeString[80];
-        strftime(dateTimeString, sizeof(dateTimeString), "%Y-%m-%d %H:%M:%S", localTime);
-
-        // Critical section
-        pthread_mutex_lock(&mutex);
-        fprintf(console,  "[%s]\t%s \t%s\n",dateTimeString,caller, message);
-        // Critical section End
-        pthread_mutex_unlock(&mutex);
-
-        fclose(console);
+            fclose(console);
+        }
     }
 }

@@ -11,7 +11,7 @@ void signal_handler(int signal) {
     if(signal == SIGTERM){
         char line_buffer[256];
         sprintf(line_buffer, "End signal received : %d, program shutdown!", signal);
-        log_write(line_buffer);
+        log_write("vk_pong", line_buffer);
         exit(1);
     }
 }
@@ -68,7 +68,7 @@ int main(int argc, char * argv[]) {
     // Si notre physical device supporte la surface on continue, sinon impossible d'utiliser Vulkan
     VkBool32 surfaceSupported = getSurfaceSupport(&surface, pBestPhysicalDevice, bestGraphicsQueueFamilyindex);
     if (!surfaceSupported) {
-        log_write("vulkan surface not supported!");
+        log_write("vk_pong", "vulkan surface not supported!");
 
         // Ménage des références existantes
         deleteSurface(&surface, &instance);
@@ -125,7 +125,7 @@ int main(int argc, char * argv[]) {
     if (vertexShaderCode == VK_NULL_HANDLE) {
         char line_buffer[256];
         sprintf(line_buffer, "VkShaderException : vertex %s shader not found!", vertexShaderFileName);
-        log_write(line_buffer);
+        log_write("vk_pong", line_buffer);
 
         deleteFramebuffers(&device, &framebuffers, swapchainImageNumber);
         deleteRenderPass(&device, &renderPass);
@@ -151,7 +151,7 @@ int main(int argc, char * argv[]) {
     if (fragmentShaderCode == VK_NULL_HANDLE) {
         char line_buffer[256];
         sprintf(line_buffer, "VkShaderException : fragment shader %s not found", fragmentShaderFileName);
-        log_write(line_buffer);
+        log_write("vk_pong", line_buffer);
 
         deleteShaderModule(&device, &vertexShaderModule);
         deleteShaderCode(&vertexShaderCode);

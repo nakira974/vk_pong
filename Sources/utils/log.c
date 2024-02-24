@@ -40,7 +40,7 @@ void log_process_args(int argc, char * argv[]){
     }
 }
 
-void log_write(const char *message){
+void log_write(const char *caller, const char *message){
     console = fopen("console.log", "a");
     if(console != NULL){
         time_t  dateTimeNow;
@@ -48,7 +48,7 @@ void log_write(const char *message){
         struct tm *localTime = localtime(&dateTimeNow);
         char dateTimeString[80];
         strftime(dateTimeString, sizeof(dateTimeString), "%Y-%m-%d %H:%M:%S", localTime);
-        fprintf(console,  "[%s] \t%s\n",dateTimeString, message);
+        fprintf(console,  "[%s]\t%s \t%s\n",dateTimeString,caller, message);
         fclose(console);
     }
 }

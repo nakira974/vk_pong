@@ -1,6 +1,6 @@
 #include "../Headers/vk_fun.h"
 
-uint32_t getqueueFamilyNumber(VkPhysicalDevice *pPhysicalDevice){
+uint32_t getQueueFamilyNumber(VkPhysicalDevice *pPhysicalDevice){
 	uint32_t queueFamilyNumber = 0;
 	vkGetPhysicalDeviceQueueFamilyProperties(*pPhysicalDevice, &queueFamilyNumber, VK_NULL_HANDLE);
 	return queueFamilyNumber;

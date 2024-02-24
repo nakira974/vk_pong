@@ -1,3 +1,9 @@
+/**
+ * @file vk_fun.h
+ * @brief This file contains the API for interacting with Vulkan API in our application
+ * @authors lonelydevil nakira974
+ * @date 24/02/2024
+ */
 #ifndef VK_FUN_H
 #define VK_FUN_H
 
@@ -61,7 +67,7 @@ uint32_t getPhysicalDeviceTotalMemory(VkPhysicalDeviceMemoryProperties *pPhysica
  * @param pPhysicalDevice The physical device to get queues family on
  * @return The list of supported queues family for the given device
  */
-uint32_t getqueueFamilyNumber(VkPhysicalDevice *pPhysicalDevice);
+uint32_t getQueueFamilyNumber(VkPhysicalDevice *pPhysicalDevice);
 
 /**
  * @brief Fetch the queue family properties for a given device and a given queue family
@@ -177,8 +183,7 @@ VkPresentModeKHR getBestPresentMode(VkSurfaceKHR *pSurface, VkPhysicalDevice *pP
 VkExtent2D getBestSwapchainExtent(VkSurfaceCapabilitiesKHR *pSurfaceCapabilities, GLFWwindow *window);
 
 /**
- * Create a swapchain with the specified parameters
- *
+ * @brief Create a swapchain with the specified parameters
  * @param pDevice Target logical device
  * @param pSurface Target surface
  * @param pSurfaceCapabilities - Target surface capabilities
@@ -240,43 +245,283 @@ VkImageView *createImageViews(VkDevice *pDevice, VkImage **ppImages, VkSurfaceFo
  */
 void deleteImageViews(VkDevice *pDevice, VkImageView **ppImageViews, uint32_t imageViewNumber);
 
+/**
+ * @brief Create a Vulkan render pass.
+ * @param pDevice Target logical device
+ * @param pFormat Chosen surface format
+ * @return The created render pass
+ */
 VkRenderPass createRenderPass(VkDevice *pDevice, VkSurfaceFormatKHR *pFormat);
+
+/**
+ * @brief Destroy a Vulkan render pass.
+ * @param pDevice Target logical device
+ * @param pRenderPass Render pass to be destroyed
+ */
 void deleteRenderPass(VkDevice *pDevice, VkRenderPass *pRenderPass);
+
+/**
+ * @brief Create Vulkan framebuffers for rendering.
+ * @param pDevice Target logical device
+ * @param pRenderPass Target render pass
+ * @param pExtent Frame buffers extensions
+ * @param ppImageViews Pointer to an array of image views
+ * @param imageViewNumber Number of image views in the given array
+ * @return Pointer to the created framebuffers
+ */
 VkFramebuffer *createFramebuffers(VkDevice *pDevice, VkRenderPass *pRenderPass, VkExtent2D *pExtent, VkImageView **ppImageViews, uint32_t imageViewNumber);
+
+/**
+ * @brief Delete Vulkan framebuffers.
+ * @param pDevice - Pointer to the Vulkan device
+ * @param ppFramebuffers - Pointer to an array of framebuffers
+ * @param framebufferNumber - Number of framebuffers
+ */
 void deleteFramebuffers(VkDevice *pDevice, VkFramebuffer **ppFramebuffers, uint32_t framebufferNumber);
 
+/**
+ * @brief Retrieve the shader code from a file.
+ * @param fileName The name of the file containing the shader code
+ * @param pShaderSize Pointer to the size of the shader code
+ * @return Pointer to the retrieved shader code
+ */
 char *getShaderCode(const char *fileName, uint32_t *pShaderSize);
+
+/**
+ * @biref Delete the shader code.
+ * @param ppShaderCode Pointer to the shader code
+ */
 void deleteShaderCode(char **ppShaderCode);
+
+/**
+ * Create a Vulkan shader module from the shader code.
+ *
+ * @param pDevice Target logical device
+ * @param pShaderCode Pointer to the shader code
+ * @param shaderSize Size of the shader code
+ * @return The created shader module
+ */
 VkShaderModule createShaderModule(VkDevice *pDevice, char *pShaderCode, uint32_t shaderSize);
+
+/**
+ * @brief Destroy a Vulkan shader module
+ * @param pDevice Target logical device
+ * @param pShaderModule Pointer to the shader module to be destroyed
+ */
 void deleteShaderModule(VkDevice *pDevice, VkShaderModule *pShaderModule);
 
+/**
+ * @brief Create a Vulkan pipeline layout.
+ * @param pDevice Target logical device
+ * @see A pipeline layout defines the interface between the shader stages and the pipeline resources. It specifies the layout of the descriptor sets and the push constant ranges used by the shaders.
+ * @return The created pipeline layout
+ */
 VkPipelineLayout createPipelineLayout(VkDevice *pDevice);
+
+/**
+ * @brief Delete a Vulkan pipeline layout.
+ * @param pDevice Target logical device
+ * @param pPipelineLayout Pointer to the pipeline layout to be deleted
+ */
 void deletePipelineLayout(VkDevice *pDevice, VkPipelineLayout *pPipelineLayout);
+
+/**
+ * @brief Configure the vertex shader stage create info for a Vulkan pipeline.
+ * @param pVertexShaderModule Pointer to the vertex shader module
+ * @param entryName Name of the entry point function in the vertex shader
+ * @return The configured shader stage create info
+ * @see Set up the necessary information for the vertex shader stage, such as the shader module and the entry point function, which will be used during the pipeline creation process
+ */
 VkPipelineShaderStageCreateInfo configureVertexShaderStageCreateInfo(VkShaderModule *pVertexShaderModule, const char *entryName);
+
+/**
+ * @brief Configure the fragment shader stage create info for a Vulkan pipeline.
+ * @param pFragmentShaderModule Pointer to the fragment shader module
+ * @param entryName Name of the entry point function in the fragment shader
+ * @return The configured shader stage create info
+ * @see set up the necessary information for the fragment shader stage, such as the shader module and the entry point function, which will be used during the pipeline creation process
+ */
 VkPipelineShaderStageCreateInfo configureFragmentShaderStageCreateInfo(VkShaderModule *pFragmentShaderModule, const char *entryName);
+
+/**
+ * @brief Configure the vertex input state create info for a Vulkan pipeline.
+ * @return The configured vertex input state create info
+ * @see Set up the necessary information for the vertex input state, such as the vertex attribute descriptions and bindings, which will be used during the pipeline creation process
+ * */
 VkPipelineVertexInputStateCreateInfo configureVertexInputStateCreateInfo();
+
+/**
+ * @brief Configure the input assembly state create info for a Vulkan pipeline.
+ * @return The configured input assembly state create info
+ * @see Set up the necessary information for the input assembly state, such as the primitive topology and whether primitive restart is enabled, which will be used during the pipeline creation process
+ */
 VkPipelineInputAssemblyStateCreateInfo configureInputAssemblyStateCreateInfo();
+
+/**
+ * @brief Configure the viewport for a Vulkan pipeline.
+ * @param pExtent Pointer to the extent of the viewport
+ * @return The configured viewport
+ * @see Set up the necessary information for the viewport, such as the extent of the viewport, which specifies the width and height of the viewport in pixels
+ */
 VkViewport configureViewport(VkExtent2D *pExtent);
+
+/**
+ * @brief Configure the scissor for a Vulkan pipeline.
+ * @param pExtent Pointer to the extension of the scissor
+ * @param left The left boundary of the scissor rectangle
+ * @param right The right boundary of the scissor rectangle
+ * @param up The upper boundary of the scissor rectangle
+ * @param down The lower boundary of the scissor rectangle
+ * @return The configured scissor rectangle
+ * @see Scissor is used to define a rectangular region of the framebuffer where pixels can be modified
+ */
 VkRect2D configureScissor(VkExtent2D *pExtent, uint32_t left, uint32_t right, uint32_t up, uint32_t down);
+
+/**
+ * @biref Configure the viewport state create info for a Vulkan pipeline.
+ * @param pViewport Pointer to the viewport
+ * @param pScissor Pointer to the scissor
+ * @return The configured viewport state create info
+ * @see The viewport state create info specifies the viewport and scissor for the pipeline
+ */
 VkPipelineViewportStateCreateInfo configureViewportStateCreateInfo(VkViewport *pViewport, VkRect2D *pScissor);
+
+/**
+ * @brief Configure the rasterization state create info for a Vulkan pipeline.
+ * @return The configured rasterization state create info
+ * @see The rasterization state create info specifies how primitives are rasterized and processed for the pipeline
+ */
 VkPipelineRasterizationStateCreateInfo configureRasterizationStateCreateInfo();
+
+/**
+ * @brief Configure the multisample state create info for a Vulkan pipeline.
+ * @return  The configured multisample state create info
+ * @see The multisample state create info specifies how multiple samples are used for each pixel in the pipeline
+ */
 VkPipelineMultisampleStateCreateInfo configureMultisampleStateCreateInfo();
+
+/**
+ * @brief Configure the color blend attachment state for a Vulkan pipeline.
+ * @return The configured color blend attachment state
+ * @see The color blend attachment state specifies how the color blending is performed for each attachment in the pipeline
+ */
 VkPipelineColorBlendAttachmentState configureColorBlendAttachmentState();
+
+/**
+ * @brief Configure the color blend state create info for a Vulkan pipeline.
+ * @param pColorBlendAttachmentState Pointer to the color blend attachment state
+ * @return The configured color blend state create info
+ * @see The color blend state create info specifies how the color blending is performed for all attachments in the pipeline
+ */
 VkPipelineColorBlendStateCreateInfo configureColorBlendStateCreateInfo(VkPipelineColorBlendAttachmentState *pColorBlendAttachmentState);
+
+/**
+ * @brief Create a graphics pipeline for rendering in Vulkan.
+ * @param pDevice Target logical device
+ * @param pPipelineLayout Pointer to the pipeline layout
+ * @param pVertexShaderModule Pointer to the vertex shader module
+ * @param pFragmentShaderModule Pointer to the fragment shader module
+ * @param pRenderPass Pointer to the render pass
+ * @param pExtent Pointer to the extension of the rendering area
+ * @return The created graphics pipeline
+ * @see Create a graphics pipeline that defines the entire rendering process, including the shaders, vertex input, rasterization, and more
+ */
 VkPipeline createGraphicsPipeline(VkDevice *pDevice, VkPipelineLayout *pPipelineLayout, VkShaderModule *pVertexShaderModule, VkShaderModule *pFragmentShaderModule, VkRenderPass *pRenderPass, VkExtent2D *pExtent);
+
+/**
+ * @brief Destroy a graphics pipeline in Vulkan.
+ * @param pDevice Target logical device
+ * @param pGraphicsPipeline Pointer to the graphics pipeline to be deleted
+ */
 void deleteGraphicsPipeline(VkDevice *pDevice, VkPipeline *pGraphicsPipeline);
 
+/**
+ * @brief Creates a Vulkan command pool for a given queue family.
+ * @param pDevice Target logical device
+ * @param queueFamilyIndex Index of the queue family
+ * @return The created command pool
+ */
 VkCommandPool createCommandPool(VkDevice *pDevice, uint32_t queueFamilyIndex);
+
+/**
+ * @brief Deletes a Vulkan command pool.
+ * @param pDevice Target logical device
+ * @param pCommandPool Pointer to the command pool to be removed
+ */
 void deleteCommandPool(VkDevice *pDevice, VkCommandPool *pCommandPool);
+
+/**
+ * @brief Creates multiple Vulkan command buffers.
+ * @param pDevice Target logical device
+ * @param pCommandPool Pointer to the command pool
+ * @param commandBufferNumber Number of command buffers to create
+ * @return Pointer to the created command buffers
+ */
 VkCommandBuffer *createCommandBuffers(VkDevice *pDevice, VkCommandPool *pCommandPool, uint32_t commandBufferNumber);
+
+/**
+ * @brief Deletes multiple Vulkan command buffers.
+ * @param pDevice Target logical device
+ * @param ppCommandBuffers Pointer to an array of command buffer pointers
+ * @param pCommandPool Pointer to the command pool
+ * @param commandBufferNumber Number of command buffers to delete
+ */
 void deleteCommandBuffers(VkDevice *pDevice, VkCommandBuffer **ppCommandBuffers, VkCommandPool *pCommandPool, uint32_t commandBufferNumber);
+
+/**
+ * @brief Records commands into multiple Vulkan command buffers.
+ * @param ppCommandBuffers Pointer to an array of command buffer pointers
+ * @param pRenderPass Pointer to the render pass
+ * @param ppFramebuffers Pointer to an array of framebuffer pointers
+ * @param pExtent Pointer to the extent of the framebuffer
+ * @param pPipeline Pointer to the graphics pipeline
+ * @param commandBufferNumber Number of command buffers to record
+ */
 void recordCommandBuffers(VkCommandBuffer **ppCommandBuffers, VkRenderPass *pRenderPass, VkFramebuffer **ppFramebuffers, VkExtent2D *pExtent, VkPipeline *pPipeline, uint32_t commandBufferNumber);
 
+/**
+ * @brief Create an array of semaphores for synchronization between frames
+ * @param pDevice Target logical device
+ * @param maxFrames Maximum number of frames to be synchronized
+ * @return Pointer to the array of semaphores
+ */
 VkSemaphore *createSemaphores(VkDevice *pDevice, uint32_t maxFrames);
+
+/**
+ * @brief Delete an array of semaphores
+ * @param pDevice Target logical device
+ * @param ppSemaphores Pointer to the pointer of the array of semaphores
+ * @param maxFrames Maximum number of frames that were synchronized
+ */
 void deleteSemaphores(VkDevice *pDevice, VkSemaphore **ppSemaphores, uint32_t maxFrames);
+
+/**
+ * @brief Create an array of fences for synchronization between frames
+ * @param pDevice Pointer to the Vulkan device object
+ * @param maxFrames Maximum number of frames to be synchronized
+ * @return Pointer to the array of fences
+ */
 VkFence *createFences(VkDevice *pDevice, uint32_t maxFrames);
+
+/**
+ * @brief Delete an array of fences
+ * @param pDevice Target logical device
+ * @param ppFences Pointer to the pointer of the array of fences
+ * @param maxFrames Maximum number of frames that were synchronized
+ */
 void deleteFences(VkDevice *pDevice, VkFence **ppFences, uint32_t maxFrames);
+
+/**
+ * @brief Create an array of empty fences for synchronization between frames
+ * @param maxFrames Maximum number of frames to be synchronized
+ * @return Pointer to the array of fences
+ */
 VkFence *createEmptyFences(uint32_t maxFrames);
+
+/**
+ * @brief Delete an array of empty fences
+ * @param ppFences Pointer to the pointer of the array of fences
+ */
 void deleteEmptyFences(VkFence **ppFences);
 
 /**
@@ -291,7 +536,7 @@ void deleteEmptyFences(VkFence **ppFences);
  * @param pSwapchain Target swap chain
  * @param pDrawingQueue Target drawing queue
  * @param pPresentingQueue Target presentation queue
- * @param maxFrames The maximum number of frame per operation
+ * @param maxFrames Maximum number of frames to be synchronized
  */
 void presentImage(VkDevice *pDevice, GLFWwindow *window, VkCommandBuffer *pCommandBuffers, VkFence *pFrontFences, VkFence *pBackFences, VkSemaphore *pWaitSemaphores, VkSemaphore *pSignalSemaphores, VkSwapchainKHR *pSwapchain, VkQueue *pDrawingQueue, VkQueue *pPresentingQueue, uint32_t maxFrames);
 

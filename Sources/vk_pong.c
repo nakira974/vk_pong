@@ -37,7 +37,7 @@ int main() {
       */
 
     // Sélection d'une famille de queue compatible
-    uint32_t queueFamilyNumber = getqueueFamilyNumber(pBestPhysicalDevice);
+    uint32_t queueFamilyNumber = getQueueFamilyNumber(pBestPhysicalDevice);
     VkQueueFamilyProperties *queueFamilyProperties = getQueueFamilyProperties(pBestPhysicalDevice, queueFamilyNumber);
     // Création du logicial device
     VkDevice device = createDevice(pBestPhysicalDevice, queueFamilyNumber, queueFamilyProperties);

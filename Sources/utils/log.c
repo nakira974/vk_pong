@@ -3,6 +3,7 @@
 //
 #include <string.h>
 #include <ctype.h>
+#include <time.h>
 #include "log.h"
 void to_lower_case(char* str){
     size_t length = strlen(str);
@@ -39,8 +40,15 @@ void log_process_args(int argc, char * argv[]){
     }
 }
 
-void log_write(const char *message, ...){
-    console = fopen("console.log", "rw");
-    fprintf(console,  "%s", message);
-    fclose(console);
+void log_write(const char *message){
+    console = fopen("console.log", "a");
+    if(console != NULL){
+        time_t  dateTimeNow;
+        time(&dateTimeNow);
+        struct tm *localTime = localtime(&dateTimeNow);
+        char dateTimeString[80];
+        strftime(dateTimeString, sizeof(dateTimeString), "%Y-%m-%d %H:%M:%S", localTime);
+        fprintf(console,  "[%s] \t%s\n",dateTimeString, message);
+        fclose(console);
+    }
 }

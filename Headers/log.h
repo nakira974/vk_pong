@@ -44,5 +44,5 @@ void log_process_args(int argc, char * argv[]);
  * @param console Target console where to write the message
  * @param message Message to be written
  */
-void log_write(const char *message, ...);
+void log_write(const char *message);
 #endif //VULKAN_TRIANGLE_LOG_H

@@ -65,14 +65,17 @@ VkInstance createInstance(const char * app_name, uint32_t app_version, const cha
 
                 if(vkEnumerateInstanceExtensionProperties(VK_NULL_HANDLE, &extension_count, extensionProperties) != VK_SUCCESS){
                     free(extensionProperties);
-                    printf("VkExtensionException : Error while allocating extension properties with Vulkan!\n");
+                    log_write("VkExtensionException : Error while allocating extension properties with Vulkan!");
                     instance_exception();
                 };
 
                 log_write("Available extensions :");
 
+
                 for(int i =0;i<extension_count;i++){
-                    log_write("-- Extension n°%d : %s", i+1, extensionProperties[i].extensionName);
+                    char line_buffer[256];
+                    sprintf(line_buffer,"Extension n°%d : %s", i+1, extensionProperties[i].extensionName);
+                    log_write(line_buffer);
                 }
 
             }

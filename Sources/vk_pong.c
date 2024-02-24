@@ -9,7 +9,9 @@
 
 void signal_handler(int signal) {
     if(signal == SIGTERM){
-        log_write("End signal received : %d, program shutdown!", signal);
+        char line_buffer[256];
+        sprintf(line_buffer, "End signal received : %d, program shutdown!", signal);
+        log_write(line_buffer);
         exit(1);
     }
 }
@@ -121,7 +123,9 @@ int main(int argc, char * argv[]) {
     char *vertexShaderCode = getShaderCode(vertexShaderFileName, &vertexShaderSize);
     // Sortir du programme si le chargement a echoué
     if (vertexShaderCode == VK_NULL_HANDLE) {
-        log_write("VkShaderException : vertex %s shader not found!", vertexShaderFileName);
+        char line_buffer[256];
+        sprintf(line_buffer, "VkShaderException : vertex %s shader not found!", vertexShaderFileName);
+        log_write(line_buffer);
 
         deleteFramebuffers(&device, &framebuffers, swapchainImageNumber);
         deleteRenderPass(&device, &renderPass);
@@ -145,7 +149,9 @@ int main(int argc, char * argv[]) {
     char *fragmentShaderCode = getShaderCode(fragmentShaderFileName, &fragmentShaderSize);
     // Sortir du programme si le chargement a echoué
     if (fragmentShaderCode == VK_NULL_HANDLE) {
-        log_write("VkShaderException : fragment shader %s not found", fragmentShaderFileName);
+        char line_buffer[256];
+        sprintf(line_buffer, "VkShaderException : fragment shader %s not found", fragmentShaderFileName);
+        log_write(line_buffer);
 
         deleteShaderModule(&device, &vertexShaderModule);
         deleteShaderCode(&vertexShaderCode);

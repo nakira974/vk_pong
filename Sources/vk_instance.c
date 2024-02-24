@@ -52,7 +52,7 @@ VkInstance createInstance(const char * app_name, uint32_t app_version, const cha
             instance_exception();
         };
 
-        if(logLevel>QUIET){
+        if(logLevel == DEBUG){
             if (setjmp(exitJump) == 0) {
                 uint32_t extension_count = 0;
                 vkEnumerateInstanceExtensionProperties(VK_NULL_HANDLE, &extension_count, VK_NULL_HANDLE);

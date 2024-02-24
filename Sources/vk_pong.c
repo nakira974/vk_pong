@@ -19,9 +19,12 @@ LogLevel logLevel;
 FILE * console;
 
 int main(int argc, char * argv[]) {
-
+    // Default app log level
     logLevel =QUIET;
-    log_process_args(argc, argv);
+    if(argc>0 && argv != NULL){
+        // Arguments processing
+        log_process_args(argc, argv);
+    }
     signal(SIGTERM, signal_handler);
     glfwInit();
 

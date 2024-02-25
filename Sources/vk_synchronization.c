@@ -42,7 +42,7 @@ void fences_destroy(VkDevice *pDevice, VkFence **ppFences, uint32_t maxFrames){
 	free(*ppFences);
 }
 
-VkFence *createEmptyFences(uint32_t maxFrames){
+VkFence *fences_create_empty(uint32_t maxFrames){
 	VkFence *fence = (VkFence *)malloc(maxFrames * sizeof(VkFence));
 	for(uint32_t i = 0; i < maxFrames; i++){
 		fence[i] = VK_NULL_HANDLE;

@@ -49,37 +49,37 @@ int main(int argc, char * argv[]) {
     glfwInit();
 
     /**
-     * ------------- Étape n°1 Instance et sélection du physical device -------------
+     * ------------- Étape n°1 Instance et sélection du physical lDevice -------------
      */
 
     // Création de l'instance de notre app
     VkInstance instance = instance_create("vk_pong", VK_MAKE_VERSION(0, 0, 1), "NO ENGINE", VK_MAKE_VERSION(0, 0, 0));
     if(instance == VK_NULL_HANDLE)   raise(SIGTERM);
-    uint32_t physicalDeviceNumber = pdevice_number(&instance);
-    VkPhysicalDevice *physicalDevices = pdevice_get_devices(&instance, physicalDeviceNumber);
+    uint32_t pDevices_count = pdevice_number(&instance);
+    VkPhysicalDevice *pDevices = pdevice_get_devices(&instance, pDevices_count);
     // Selection d'une carte graphique compatible
-    uint32_t bestPhysicalDeviceIndex = pdevice_get_best_index(physicalDevices, physicalDeviceNumber);
-    // Création du physical device et selection de la meilleure carte graphique compatible
-    VkPhysicalDevice *pBestPhysicalDevice = &physicalDevices[bestPhysicalDeviceIndex];
+    uint32_t best_pDevice_index = pdevice_get_best_index(pDevices, pDevices_count);
+    // Création du physical lDevice et selection de la meilleure carte graphique compatible
+    VkPhysicalDevice *best_pDevice = &pDevices[best_pDevice_index];
 
     /**
-      * ------------- Étape n°2 Logical device et famille de queues -------------
+      * ------------- Étape n°2 Logical lDevice et famille de queues -------------
       */
 
     // Sélection d'une famille de queue compatible
-    uint32_t queueFamilyNumber = queue_get_family_number(pBestPhysicalDevice);
-    VkQueueFamilyProperties *queueFamilyProperties = queue_get_family_properties(pBestPhysicalDevice, queueFamilyNumber);
-    // Création du logicial device
-    VkDevice device = device_create(pBestPhysicalDevice, queueFamilyNumber, queueFamilyProperties);
+    uint32_t queue_family_number = queue_get_family_number(best_pDevice);
+    VkQueueFamilyProperties *queue_family_properties = queue_get_family_properties(best_pDevice, queue_family_number);
+    // Création du logicial lDevice
+    VkDevice lDevice = ldevice_create(best_pDevice, queue_family_number, queue_family_properties);
     // Sélection de la meilleure famille queue
-    uint32_t bestGraphicsQueueFamilyindex = queue_get_best_graphics_family_index(queueFamilyProperties,
-                                                                                 queueFamilyNumber);
-    uint32_t graphicsQueueMode = queue_get_graphics_mode(queueFamilyProperties, bestGraphicsQueueFamilyindex);
+    uint32_t bestGraphicsQueueFamilyindex = queue_get_best_graphics_family_index(queue_family_properties,
+                                                                                 queue_family_number);
+    uint32_t graphicsQueueMode = queue_get_graphics_mode(queue_family_properties, bestGraphicsQueueFamilyindex);
     // Création de queues pour nos différentes opérations asynchrones
-    VkQueue drawingQueue = queue_get_drawing(&device, bestGraphicsQueueFamilyindex);
-    VkQueue presentingQueue = queue_get_presentation(&device, bestGraphicsQueueFamilyindex, graphicsQueueMode);
-    // Libération de la structure sur les properiétés des familles de queues de notre physical device
-    queue_delete_family_properties(&queueFamilyProperties);
+    VkQueue drawingQueue = queue_get_drawing(&lDevice, bestGraphicsQueueFamilyindex);
+    VkQueue presentingQueue = queue_get_presentation(&lDevice, bestGraphicsQueueFamilyindex, graphicsQueueMode);
+    // Libération de la structure sur les properiétés des familles de queues de notre physical lDevice
+    queue_delete_family_properties(&queue_family_properties);
 
     /**
    * ------------- Étape n°3 Création de la surface d'affichage et swap chain -------------
@@ -89,16 +89,16 @@ int main(int argc, char * argv[]) {
     GLFWwindow *window = window_create(600, 600, windowTitle);
     // Affectation de la fenêtre à la surface vulkan
     VkSurfaceKHR surface = surface_create(window, &instance);
-    // Si notre physical device supporte la surface on continue, sinon impossible d'utiliser Vulkan
-    VkBool32 surfaceSupported = surface_get_support(&surface, pBestPhysicalDevice, bestGraphicsQueueFamilyindex);
+    // Si notre physical lDevice supporte la surface on continue, sinon impossible d'utiliser Vulkan
+    VkBool32 surfaceSupported = surface_get_support(&surface, best_pDevice, bestGraphicsQueueFamilyindex);
     if (!surfaceSupported) {
         log_write(FATAL, "vk_pong", "vulkan surface not supported!");
 
         // Ménage des références existantes
         surface_destroy(&surface, &instance);
         window_destroy(window);
-        device_destroy(&device);
-        pdevice_destroy(&physicalDevices);
+        ldevice_destroy(&lDevice);
+        pdevice_destroy(&pDevices);
         instance_destroy(&instance);
         pthread_mutex_destroy(&main_thread_mutex);
 
@@ -106,37 +106,37 @@ int main(int argc, char * argv[]) {
     }
 
     // Sélection des propriétés de la surface
-    VkSurfaceCapabilitiesKHR surfaceCapabilities = surface_get_capabilities(&surface, pBestPhysicalDevice);
+    VkSurfaceCapabilitiesKHR surfaceCapabilities = surface_get_capabilities(&surface, best_pDevice);
     // Sélection du meilleur format pour la surface
-    VkSurfaceFormatKHR bestSurfaceFormat = surface_get_best_format(&surface, pBestPhysicalDevice);
+    VkSurfaceFormatKHR bestSurfaceFormat = surface_get_best_format(&surface, best_pDevice);
     // Sélection du meilleur mode de présentation sur notre surface
-    VkPresentModeKHR bestPresentMode = surface_get_best_present_mode(&surface, pBestPhysicalDevice);
+    VkPresentModeKHR bestPresentMode = surface_get_best_present_mode(&surface, best_pDevice);
     // Sélection des meilleures extensions pour notre notre surface en fonction de ses capacités
     VkExtent2D bestSwapchainExtent = swapchain_get_best_extent(&surfaceCapabilities, window);
     uint32_t imageArrayLayers = 1;
     // Collection de cibles sur lesquelles nous pouvons effectuer un rendu
-    VkSwapchainKHR swapchain = swapchain_create(&device, &surface, &surfaceCapabilities, &bestSurfaceFormat,
+    VkSwapchainKHR swapchain = swapchain_create(&lDevice, &surface, &surfaceCapabilities, &bestSurfaceFormat,
                                                 &bestSwapchainExtent, &bestPresentMode, imageArrayLayers,
                                                 graphicsQueueMode);
 
-    uint32_t swapchainImageNumber = swapchain_get_image_number(&device, &swapchain);
-    VkImage *swapchainImages = swapchain_get_images(&device, &swapchain, swapchainImageNumber);
+    uint32_t swapchainImageNumber = swapchain_get_image_number(&lDevice, &swapchain);
+    VkImage *swapchainImages = swapchain_get_images(&lDevice, &swapchain, swapchainImageNumber);
 
     /**
    * ------------- Étape n°4 Image views et frame buffers -------------
    */
 
     // Pour dessiner les images de la swapchain on doit l'encapsuler dans un VkImageView
-    VkImageView *swapchainImageViews = imageviews_create(&device, &swapchainImages, &bestSurfaceFormat,
+    VkImageView *swapchainImageViews = imageviews_create(&lDevice, &swapchainImages, &bestSurfaceFormat,
                                                          swapchainImageNumber, imageArrayLayers);
 
     /**
   * ------------- Étape n5 Render passe -------------
   */
   // Création de la render passe pour décrire le type d'images utilisées et comment les traiter
-    VkRenderPass renderPass = renderpass_create(&device, &bestSurfaceFormat);
+    VkRenderPass renderPass = renderpass_create(&lDevice, &bestSurfaceFormat);
     // Encapsulation du VkImageView dans un VkFramebuffer
-    VkFramebuffer *framebuffers = framebuffers_create(&device, &renderPass, &bestSwapchainExtent, &swapchainImageViews,
+    VkFramebuffer *framebuffers = framebuffers_create(&lDevice, &renderPass, &bestSwapchainExtent, &swapchainImageViews,
                                                       swapchainImageNumber);
 
     /**
@@ -152,22 +152,22 @@ int main(int argc, char * argv[]) {
         sprintf(line_buffer, "VkShaderException : vertex %s shader not found!", vertexShaderFileName);
         log_write(FATAL, "vk_pong", line_buffer);
 
-        framebuffers_destroy(&device, &framebuffers, swapchainImageNumber);
-        renderpass_destroy(&device, &renderPass);
-        imageview_destroy(&device, &swapchainImageViews, swapchainImageNumber);
+        framebuffers_destroy(&lDevice, &framebuffers, swapchainImageNumber);
+        renderpass_destroy(&lDevice, &renderPass);
+        imageviews_destroy(&lDevice, &swapchainImageViews, swapchainImageNumber);
         swapchain_destroy_images(&swapchainImages);
-        swapchain_destroy(&device, &swapchain);
+        swapchain_destroy(&lDevice, &swapchain);
         surface_destroy(&surface, &instance);
         window_destroy(window);
-        device_destroy(&device);
-        pdevice_destroy(&physicalDevices);
+        ldevice_destroy(&lDevice);
+        pdevice_destroy(&pDevices);
         instance_destroy(&instance);
         pthread_mutex_destroy(&main_thread_mutex);
 
         raise(SIGTERM);
     }
     // Création d'un module shader pour notre vertex shader
-    VkShaderModule vertexShaderModule = shader_create_module(&device, vertexShaderCode, vertexShaderSize);
+    VkShaderModule vertexShaderModule = shader_create_module(&lDevice, vertexShaderCode, vertexShaderSize);
 
     uint32_t fragmentShaderSize = 0;
     char fragmentShaderFileName[] = "Shaders/triangle_fragment.spv";
@@ -179,38 +179,38 @@ int main(int argc, char * argv[]) {
         sprintf(line_buffer, "VkShaderException : fragment shader %s not found", fragmentShaderFileName);
         log_write(FATAL, "vk_pong", line_buffer);
 
-        shader_destroy_module(&device, &vertexShaderModule);
+        shader_destroy_module(&lDevice, &vertexShaderModule);
         shader_destroy_code(&vertexShaderCode);
 
-        framebuffers_destroy(&device, &framebuffers, swapchainImageNumber);
-        renderpass_destroy(&device, &renderPass);
-        imageview_destroy(&device, &swapchainImageViews, swapchainImageNumber);
+        framebuffers_destroy(&lDevice, &framebuffers, swapchainImageNumber);
+        renderpass_destroy(&lDevice, &renderPass);
+        imageviews_destroy(&lDevice, &swapchainImageViews, swapchainImageNumber);
         swapchain_destroy_images(&swapchainImages);
-        swapchain_destroy(&device, &swapchain);
+        swapchain_destroy(&lDevice, &swapchain);
         surface_destroy(&surface, &instance);
         window_destroy(window);
-        device_destroy(&device);
-        pdevice_destroy(&physicalDevices);
+        ldevice_destroy(&lDevice);
+        pdevice_destroy(&pDevices);
         instance_destroy(&instance);
         pthread_mutex_destroy(&main_thread_mutex);
 
         raise(SIGTERM);
     }
     // Création d'un module shader pour notre fragment shader
-    VkShaderModule fragmentShaderModule = shader_create_module(&device, fragmentShaderCode, fragmentShaderSize);
+    VkShaderModule fragmentShaderModule = shader_create_module(&lDevice, fragmentShaderCode, fragmentShaderSize);
     // Création d'un pipeline layout pour héberger nos pipelines graphique mais ici nous n'en avons qu'un seul
-    VkPipelineLayout pipelineLayout = pipelineLayout_create(&device);
+    VkPipelineLayout pipelineLayout = gpipeline_layout_create(&lDevice);
     // Création du pipeline graphique principal, on lui passe nos shader modules, sont layout, la render passe ainsi que les extensions de la swap chain
-    VkPipeline graphicsPipeline = gpipeline_create(&device, &pipelineLayout, &vertexShaderModule,
+    VkPipeline graphicsPipeline = gpipeline_create(&lDevice, &pipelineLayout, &vertexShaderModule,
                                                    &fragmentShaderModule, &renderPass, &bestSwapchainExtent);
 
     // Une fois le byte code de nos shaders injecté dans le pipeline graphique on peut libérer les ressources
-    // On retire à notre logical device le module fragment shader
-    shader_destroy_module(&device, &fragmentShaderModule);
+    // On retire à notre logical lDevice le module fragment shader
+    shader_destroy_module(&lDevice, &fragmentShaderModule);
     // On supprime le byte code du fragment shader
     shader_destroy_code(&fragmentShaderCode);
-    // On retire à notre logical device le module vertex shader
-    shader_destroy_module(&device, &vertexShaderModule);
+    // On retire à notre logical lDevice le module vertex shader
+    shader_destroy_module(&lDevice, &vertexShaderModule);
     // On supprime le byte code du vertex shader
     shader_destroy_code(&vertexShaderCode);
 
@@ -219,47 +219,47 @@ int main(int argc, char * argv[]) {
   */
 
     // Allocateur principal pour nous command buffer
-    VkCommandPool commandPool = commandPool_create(&device, bestGraphicsQueueFamilyindex);
+    VkCommandPool commandPool = command_pool_create(&lDevice, bestGraphicsQueueFamilyindex);
     // Allocation d'un command buffer à partir du pool
-    VkCommandBuffer *commandBuffers = commandBuffers_create(&device, &commandPool, swapchainImageNumber);
-    commandBuffers_record(&commandBuffers, &renderPass, &framebuffers, &bestSwapchainExtent, &graphicsPipeline,
-                          swapchainImageNumber);
+    VkCommandBuffer *commandBuffers = command_buffers_create(&lDevice, &commandPool, swapchainImageNumber);
+    command_buffers_record(&commandBuffers, &renderPass, &framebuffers, &bestSwapchainExtent, &graphicsPipeline,
+                           swapchainImageNumber);
     // Nombre maximum d'opérations authorisées sur les images
     uint32_t maxFrames = 2;
     // Création de sémaphore pour synchroniser la génération d'image et le rendu comme les command buffers sont asynchrones
-    VkSemaphore *waitSemaphores = semaphores_create(&device, maxFrames), *signalSemaphores = semaphores_create(&device,
-                                                                                                               maxFrames);
+    VkSemaphore *waitSemaphores = semaphores_create(&lDevice, maxFrames), *signalSemaphores = semaphores_create(&lDevice,
+                                                                                                                maxFrames);
     // On créer des barrières qui servent à abriter le résultat de nos calculs sont les objects synchronisé entre les threads de génération et rendu
-    VkFence *frontFences = fences_create(&device, maxFrames), *backFences = createEmptyFences(swapchainImageNumber);
+    VkFence *frontFences = fences_create(&lDevice, maxFrames), *backFences = fences_create_empty(swapchainImageNumber);
 
     /**
   * ------------- Étape n°8 Boucle principale -------------
   */
   // Boucle principale du programme
-    present_image(&device, window, commandBuffers, frontFences, backFences, waitSemaphores, signalSemaphores,
-                  &swapchain,
-                  &drawingQueue, &presentingQueue, maxFrames);
+    main_loop(&lDevice, window, commandBuffers, frontFences, backFences, waitSemaphores, signalSemaphores,
+              &swapchain,
+              &drawingQueue, &presentingQueue, maxFrames);
 
     /**
   * ------------- Étape n°9 Gros ménage -------------
   */
     fences_destroy_empty(&backFences);
-    fences_destroy(&device, &frontFences, maxFrames);
-    semaphores_destroy(&device, &signalSemaphores, maxFrames);
-    semaphores_destroy(&device, &waitSemaphores, maxFrames);
-    commandBuffers_destroy(&device, &commandBuffers, &commandPool, swapchainImageNumber);
-    commandPool_destroy(&device, &commandPool);
-    gpipeline_destroy(&device, &graphicsPipeline);
-    pipelineLayout_destroy(&device, &pipelineLayout);
-    framebuffers_destroy(&device, &framebuffers, swapchainImageNumber);
-    renderpass_destroy(&device, &renderPass);
-    imageview_destroy(&device, &swapchainImageViews, swapchainImageNumber);
+    fences_destroy(&lDevice, &frontFences, maxFrames);
+    semaphores_destroy(&lDevice, &signalSemaphores, maxFrames);
+    semaphores_destroy(&lDevice, &waitSemaphores, maxFrames);
+    command_buffers_destroy(&lDevice, &commandBuffers, &commandPool, swapchainImageNumber);
+    command_pool_destroy(&lDevice, &commandPool);
+    gpipeline_destroy(&lDevice, &graphicsPipeline);
+    gpipeline_layout_destroy(&lDevice, &pipelineLayout);
+    framebuffers_destroy(&lDevice, &framebuffers, swapchainImageNumber);
+    renderpass_destroy(&lDevice, &renderPass);
+    imageviews_destroy(&lDevice, &swapchainImageViews, swapchainImageNumber);
     swapchain_destroy_images(&swapchainImages);
-    swapchain_destroy(&device, &swapchain);
+    swapchain_destroy(&lDevice, &swapchain);
     surface_destroy(&surface, &instance);
     window_destroy(window);
-    device_destroy(&device);
-    pdevice_destroy(&physicalDevices);
+    ldevice_destroy(&lDevice);
+    pdevice_destroy(&pDevices);
     instance_destroy(&instance);
     glfwTerminate();
     pthread_mutex_destroy(&main_thread_mutex);

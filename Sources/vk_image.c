@@ -52,7 +52,7 @@ VkImageView *imageviews_create(VkDevice *pDevice, VkImage **ppImages, VkSurfaceF
 	return imageViews;
 }
 
-void imageview_destroy(VkDevice *pDevice, VkImageView **ppImageViews, uint32_t imageViewNumber){
+void imageviews_destroy(VkDevice *pDevice, VkImageView **ppImageViews, uint32_t imageViewNumber){
 	for(uint32_t i = 0; i < imageViewNumber; i++){
 		vkDestroyImageView(*pDevice, (*ppImageViews)[i], VK_NULL_HANDLE);
 	}

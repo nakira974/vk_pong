@@ -42,15 +42,19 @@ uint32_t pdevice_get_best_index(VkPhysicalDevice *pPhysicalDevices, uint32_t phy
 
 	if(discreteGPUNumber != 0){
 		for(uint32_t i = 0; i < discreteGPUNumber; i++){
-			if(bestPhysicalDeviceMemory < getPhysicalDeviceTotalMemory(&physicalDeviceMemoryProperties[discreteGPUIndices[i]])){
-				bestPhysicalDeviceMemory = getPhysicalDeviceTotalMemory(&physicalDeviceMemoryProperties[discreteGPUIndices[i]]);
+			if(bestPhysicalDeviceMemory <
+                    pdevice_get_total_memory(&physicalDeviceMemoryProperties[discreteGPUIndices[i]])){
+				bestPhysicalDeviceMemory = pdevice_get_total_memory(
+                        &physicalDeviceMemoryProperties[discreteGPUIndices[i]]);
 				bestPhysicalDeviceIndex = discreteGPUIndices[i];
 			}
 		}
 	}else if(integratedGPUNumber != 0){
 		for(uint32_t i = 0; i < integratedGPUNumber; i++){
-			if(bestPhysicalDeviceMemory < getPhysicalDeviceTotalMemory(&physicalDeviceMemoryProperties[integratedGPUIndices[i]])){
-				bestPhysicalDeviceMemory = getPhysicalDeviceTotalMemory(&physicalDeviceMemoryProperties[integratedGPUIndices[i]]);
+			if(bestPhysicalDeviceMemory <
+                    pdevice_get_total_memory(&physicalDeviceMemoryProperties[integratedGPUIndices[i]])){
+				bestPhysicalDeviceMemory = pdevice_get_total_memory(
+                        &physicalDeviceMemoryProperties[integratedGPUIndices[i]]);
 				bestPhysicalDeviceIndex = integratedGPUIndices[i];
 			}
 		}
@@ -64,7 +68,7 @@ uint32_t pdevice_get_best_index(VkPhysicalDevice *pPhysicalDevices, uint32_t phy
 	return bestPhysicalDeviceIndex;
 }
 
-uint32_t getPhysicalDeviceTotalMemory(VkPhysicalDeviceMemoryProperties *pPhysicalDeviceMemoryProperties){
+uint32_t pdevice_get_total_memory(VkPhysicalDeviceMemoryProperties *pPhysicalDeviceMemoryProperties){
 	uint32_t physicalDeviceTotalMemory = 0;
 	for(int i = 0; i < pPhysicalDeviceMemoryProperties->memoryHeapCount; i++){
 		if((pPhysicalDeviceMemoryProperties->memoryHeaps[i].flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT) != 0){

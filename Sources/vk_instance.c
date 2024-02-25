@@ -10,7 +10,7 @@ void instance_exception() {
     longjmp(exitJump, 1);
 }
 
-bool check_validation_support(){
+bool instance_check_validation_support(){
     uint32_t layer_count;
     vkEnumerateInstanceLayerProperties(&layer_count, VK_NULL_HANDLE);
     VkLayerProperties  *layerProperties;
@@ -90,7 +90,7 @@ VkInstance instance_create(const char * app_name, uint32_t app_version, const ch
 
         // Si on est en build debug on lance le check des validation layers LunarG du SDK
         if(enableValidationLayers){
-            if (!check_validation_support()) {
+            if (!instance_check_validation_support()) {
                 log_write(FATAL, "vk_instance", "VkValidationLayerException : Error, validations are activated but not available on the current platform!");
                 instance_exception();
             }
@@ -109,8 +109,38 @@ VkInstance instance_create(const char * app_name, uint32_t app_version, const ch
 
         uint32_t extensionNumber = 0;
         // On récupère le nombre d'extensions GLFW spécifique à la plateforme
-        const char *const *glfw_extensions = glfwGetRequiredInstanceExtensions(&extensionNumber);
 
+        const char *const *glfw_extensions;
+        // Si on est en build de debug ajouter les extensions GLFW de debug
+        if(enableValidationLayers){
+            const char *const *glfw_instance_extensions = glfwGetRequiredInstanceExtensions(&extensionNumber);
+            glfw_extensions = malloc((extensionNumber++) * sizeof (const char * const*));
+            memcpy(glfw_extensions,glfw_instance_extensions, extensionNumber* sizeof(const char * const*) );
+            // String temporaire pour copier la valeur d'extensions custom
+            char* ext = malloc(strlen(VK_EXT_DEBUG_UTILS_EXTENSION_NAME) + 1);
+            // On VK_EXT_DEBUG_UTILS_EXTENSION_NAME cette valeur dans le nouveau bloc de mémoire ext
+            memcpy(ext, VK_EXT_DEBUG_UTILS_EXTENSION_NAME, strlen(VK_EXT_DEBUG_UTILS_EXTENSION_NAME) + 1);
+            // On calcul l'offset correct dans le tableau de pointeurs
+            int offset = (extensionNumber-1) * sizeof(char*);
+            // On y copie l'adresse du nouveau bloc de mémoire.
+            memcpy((char*)glfw_extensions + offset, &ext, sizeof(const char *));
+            // Le nouveau bloc d'adresse peut être affecté sans pb
+            strcpy(glfw_extensions[extensionNumber-1], VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+            log_write(DEBUG, "vk_instance", "GLFW debug extension enabled");
+
+            char line_buffer[512];
+            for(int i =0;i<extensionNumber;i++){
+                if(glfw_extensions[i] != NULL) {
+                    const char *current_extension = glfw_extensions[i];
+                    sprintf(line_buffer, "GLFW extension n°%d : %s", i + 1, current_extension);
+                } else {
+                    sprintf(line_buffer, "GLFW extension n°%d : NULL", i + 1);
+                }
+                log_write(DEBUG, "vk_instance", line_buffer);
+            }
+        }else{
+            glfw_extensions = glfwGetRequiredInstanceExtensions(&extensionNumber);
+        }
         // Permet d’informer le driver des extensions et des validation layers
         // que nous utiliserons, et ceci de manière globale
         VkInstanceCreateInfo instanceCreateInfo = {
@@ -131,7 +161,6 @@ VkInstance instance_create(const char * app_name, uint32_t app_version, const ch
             log_write(FATAL, "vk_instance", "VkInstanceException : Error while creating vulkan instance!");
             instance_exception();
         };
-
 
         return instance;
     }

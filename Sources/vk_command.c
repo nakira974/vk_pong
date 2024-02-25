@@ -1,6 +1,6 @@
 #include "vk_fun.h"
 
-VkCommandPool commandPool_create(VkDevice *pDevice, uint32_t queueFamilyIndex){
+VkCommandPool command_pool_create(VkDevice *pDevice, uint32_t queueFamilyIndex){
 	VkCommandPoolCreateInfo commandPoolCreateInfo = {
 		VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
 		VK_NULL_HANDLE,
@@ -13,11 +13,11 @@ VkCommandPool commandPool_create(VkDevice *pDevice, uint32_t queueFamilyIndex){
 	return commandPool;
 }
 
-void commandPool_destroy(VkDevice *pDevice, VkCommandPool *pCommandPool){
+void command_pool_destroy(VkDevice *pDevice, VkCommandPool *pCommandPool){
 	vkDestroyCommandPool(*pDevice, *pCommandPool, VK_NULL_HANDLE);
 }
 
-VkCommandBuffer *commandBuffers_create(VkDevice *pDevice, VkCommandPool *pCommandPool, uint32_t commandBufferNumber){
+VkCommandBuffer *command_buffers_create(VkDevice *pDevice, VkCommandPool *pCommandPool, uint32_t commandBufferNumber){
 	VkCommandBufferAllocateInfo commandBufferAllocateInfo = {
 		VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
 		VK_NULL_HANDLE,
@@ -31,12 +31,12 @@ VkCommandBuffer *commandBuffers_create(VkDevice *pDevice, VkCommandPool *pComman
 	return commandBuffers;
 }
 
-void commandBuffers_destroy(VkDevice *pDevice, VkCommandBuffer **ppCommandBuffers, VkCommandPool *pCommandPool, uint32_t commandBufferNumber){
+void command_buffers_destroy(VkDevice *pDevice, VkCommandBuffer **ppCommandBuffers, VkCommandPool *pCommandPool, uint32_t commandBufferNumber){
 	vkFreeCommandBuffers(*pDevice, *pCommandPool, commandBufferNumber, *ppCommandBuffers);
 	free(*ppCommandBuffers);
 }
 
-void commandBuffers_record(VkCommandBuffer **ppCommandBuffers, VkRenderPass *pRenderPass, VkFramebuffer **ppFramebuffers, VkExtent2D *pExtent, VkPipeline *pPipeline, uint32_t commandBufferNumber){
+void command_buffers_record(VkCommandBuffer **ppCommandBuffers, VkRenderPass *pRenderPass, VkFramebuffer **ppFramebuffers, VkExtent2D *pExtent, VkPipeline *pPipeline, uint32_t commandBufferNumber){
 	VkCommandBufferBeginInfo *commandBufferBeginInfos = (VkCommandBufferBeginInfo *)malloc(commandBufferNumber * sizeof(VkCommandBufferBeginInfo));
 	VkRenderPassBeginInfo *renderPassBeginInfos = (VkRenderPassBeginInfo *)malloc(commandBufferNumber *sizeof(VkRenderPassBeginInfo));
 	VkRect2D renderArea = {

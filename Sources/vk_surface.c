@@ -1,7 +1,7 @@
 #include "vk_fun.h"
 #include "glfw_fun.h"
 
-GLFWwindow *createVulkanWindow(int width, int height, const char *title){
+GLFWwindow *window_create(int width, int height, const char *title){
 	glfwWindowHint(GLFW_CLIENT_API,GLFW_NO_API);
 	glfwWindowHint(GLFW_RESIZABLE,GLFW_FALSE);
 	GLFWwindow *window = glfwCreateWindow(width, height, title, VK_NULL_HANDLE, VK_NULL_HANDLE);
@@ -12,33 +12,33 @@ GLFWwindow *createVulkanWindow(int width, int height, const char *title){
 	return window;
 }
 
-void deleteWindow(GLFWwindow *pWindow){
+void window_destroy(GLFWwindow *pWindow){
 	glfwDestroyWindow(pWindow);
 }
 
-VkSurfaceKHR createSurface(GLFWwindow *pWindow, VkInstance *pInstance){
+VkSurfaceKHR surface_create(GLFWwindow *pWindow, VkInstance *pInstance){
 	VkSurfaceKHR surface;
 	glfwCreateWindowSurface(*pInstance, pWindow, VK_NULL_HANDLE, &surface);
 	return surface;
 }
 
-void deleteSurface(VkSurfaceKHR *pSurface, VkInstance *pInstance){
+void surface_destroy(VkSurfaceKHR *pSurface, VkInstance *pInstance){
 	vkDestroySurfaceKHR(*pInstance, *pSurface, VK_NULL_HANDLE);
 }
 
-VkBool32 getSurfaceSupport(VkSurfaceKHR *pSurface, VkPhysicalDevice *pPhysicalDevice, uint32_t graphicsQueueFamilyindex){
+VkBool32 surface_get_support(VkSurfaceKHR *pSurface, VkPhysicalDevice *pPhysicalDevice, uint32_t graphicsQueueFamilyindex){
 	VkBool32 surfaceSupport = 0;
 	vkGetPhysicalDeviceSurfaceSupportKHR(*pPhysicalDevice, graphicsQueueFamilyindex, *pSurface, &surfaceSupport);
 	return surfaceSupport;
 }
 
-VkSurfaceCapabilitiesKHR getSurfaceCapabilities(VkSurfaceKHR *pSurface, VkPhysicalDevice *pPhysicalDevice){
+VkSurfaceCapabilitiesKHR surface_get_capabilities(VkSurfaceKHR *pSurface, VkPhysicalDevice *pPhysicalDevice){
 	VkSurfaceCapabilitiesKHR surfaceCapabilities;
 	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(*pPhysicalDevice, *pSurface, &surfaceCapabilities);
 	return surfaceCapabilities;
 }
 
-VkSurfaceFormatKHR getBestSurfaceFormat(VkSurfaceKHR *pSurface, VkPhysicalDevice *pPhysicalDevice){
+VkSurfaceFormatKHR surface_get_best_format(VkSurfaceKHR *pSurface, VkPhysicalDevice *pPhysicalDevice){
 	uint32_t surfaceFormatNumber = 0;
 	vkGetPhysicalDeviceSurfaceFormatsKHR(*pPhysicalDevice, *pSurface, &surfaceFormatNumber, VK_NULL_HANDLE);
 	VkSurfaceFormatKHR *surfaceFormats = (VkSurfaceFormatKHR *)malloc(surfaceFormatNumber * sizeof(VkSurfaceFormatKHR));
@@ -49,7 +49,7 @@ VkSurfaceFormatKHR getBestSurfaceFormat(VkSurfaceKHR *pSurface, VkPhysicalDevice
 	return bestSurfaceFormat;
 }
 
-VkPresentModeKHR getBestPresentMode(VkSurfaceKHR *pSurface, VkPhysicalDevice *pPhysicalDevice){
+VkPresentModeKHR surface_get_best_present_mode(VkSurfaceKHR *pSurface, VkPhysicalDevice *pPhysicalDevice){
 	uint32_t presentModeNumber = 0;
 	vkGetPhysicalDeviceSurfacePresentModesKHR(*pPhysicalDevice, *pSurface, &presentModeNumber, VK_NULL_HANDLE);
 	VkPresentModeKHR *presentModes = (VkPresentModeKHR *)malloc(presentModeNumber * sizeof(VkPresentModeKHR));
@@ -67,7 +67,7 @@ VkPresentModeKHR getBestPresentMode(VkSurfaceKHR *pSurface, VkPhysicalDevice *pP
 	return bestPresentMode;
 }
 
-VkExtent2D getBestSwapchainExtent(VkSurfaceCapabilitiesKHR *pSurfaceCapabilities, GLFWwindow *window){
+VkExtent2D swapchain_get_best_extent(VkSurfaceCapabilitiesKHR *pSurfaceCapabilities, GLFWwindow *window){
 	int FramebufferWidth = 0, FramebufferHeight = 0;
 	glfwGetFramebufferSize(window, &FramebufferWidth, &FramebufferHeight);
 
@@ -88,7 +88,7 @@ VkExtent2D getBestSwapchainExtent(VkSurfaceCapabilitiesKHR *pSurfaceCapabilities
 	return bestSwapchainExtent;
 }
 
-VkSwapchainKHR createSwapChain(VkDevice *pDevice, VkSurfaceKHR *pSurface, VkSurfaceCapabilitiesKHR *pSurfaceCapabilities, VkSurfaceFormatKHR *pSurfaceFormat, VkExtent2D *pSwapchainExtent, VkPresentModeKHR *pPresentMode, uint32_t imageArrayLayers, uint32_t graphicsQueueMode){
+VkSwapchainKHR swapchain_create(VkDevice *pDevice, VkSurfaceKHR *pSurface, VkSurfaceCapabilitiesKHR *pSurfaceCapabilities, VkSurfaceFormatKHR *pSurfaceFormat, VkExtent2D *pSwapchainExtent, VkPresentModeKHR *pPresentMode, uint32_t imageArrayLayers, uint32_t graphicsQueueMode){
 	VkSharingMode imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	uint32_t queueFamilyIndexCount = 0, *pQueueFamilyIndices = VK_NULL_HANDLE;
 	uint32_t queueFamilyIndices[] = {0, 1};
@@ -124,6 +124,6 @@ VkSwapchainKHR createSwapChain(VkDevice *pDevice, VkSurfaceKHR *pSurface, VkSurf
 	return swapchain;
 }
 
-void deleteSwapchain(VkDevice *pDevice, VkSwapchainKHR *pSwapchain){
+void swapchain_destroy(VkDevice *pDevice, VkSwapchainKHR *pSwapchain){
 	vkDestroySwapchainKHR(*pDevice, *pSwapchain, VK_NULL_HANDLE);
 }

@@ -1,6 +1,6 @@
 #include "vk_fun.h"
 
-VkDevice createDevice(VkPhysicalDevice *pPhysicalDevice, uint32_t queueFamilyNumber, VkQueueFamilyProperties *pQueueFamilyProperties){
+VkDevice device_create(VkPhysicalDevice *pPhysicalDevice, uint32_t queueFamilyNumber, VkQueueFamilyProperties *pQueueFamilyProperties){
 	VkDeviceQueueCreateInfo *deviceQueueCreateInfo = (VkDeviceQueueCreateInfo *)malloc(queueFamilyNumber * sizeof(VkDeviceQueueCreateInfo));
 	float **queuePriorities = (float **)malloc(queueFamilyNumber * sizeof(float *));
 
@@ -51,6 +51,6 @@ VkDevice createDevice(VkPhysicalDevice *pPhysicalDevice, uint32_t queueFamilyNum
 	return device;
 }
 
-void deleteDevice(VkDevice *pDevice){
+void device_destroy(VkDevice *pDevice){
 	vkDestroyDevice(*pDevice, VK_NULL_HANDLE);
 }

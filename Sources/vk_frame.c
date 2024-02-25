@@ -1,6 +1,6 @@
 #include "vk_fun.h"
 
-VkRenderPass createRenderPass(VkDevice *pDevice, VkSurfaceFormatKHR *pFormat){
+VkRenderPass renderpass_create(VkDevice *pDevice, VkSurfaceFormatKHR *pFormat){
 	VkAttachmentDescription attachmentDescription = {
 		0,
 		pFormat->format,
@@ -58,11 +58,11 @@ VkRenderPass createRenderPass(VkDevice *pDevice, VkSurfaceFormatKHR *pFormat){
 	return renderPass;
 }
 
-void deleteRenderPass(VkDevice *pDevice, VkRenderPass *pRenderPass){
+void renderpass_destroy(VkDevice *pDevice, VkRenderPass *pRenderPass){
 	vkDestroyRenderPass(*pDevice, *pRenderPass, VK_NULL_HANDLE);
 }
 
-VkFramebuffer *createFramebuffers(VkDevice *pDevice, VkRenderPass *pRenderPass, VkExtent2D *pExtent, VkImageView **ppImageViews, uint32_t imageViewNumber){
+VkFramebuffer *framebuffers_create(VkDevice *pDevice, VkRenderPass *pRenderPass, VkExtent2D *pExtent, VkImageView **ppImageViews, uint32_t imageViewNumber){
 	VkFramebufferCreateInfo *framebufferCreateInfo = (VkFramebufferCreateInfo *)malloc(imageViewNumber * sizeof(VkFramebufferCreateInfo));
 	VkFramebuffer *framebuffers = (VkFramebuffer *)malloc(imageViewNumber * sizeof(VkFramebuffer));
 
@@ -84,7 +84,7 @@ VkFramebuffer *createFramebuffers(VkDevice *pDevice, VkRenderPass *pRenderPass, 
 	return framebuffers;
 }
 
-void deleteFramebuffers(VkDevice *pDevice, VkFramebuffer **ppFramebuffers, uint32_t framebufferNumber){
+void framebuffers_destroy(VkDevice *pDevice, VkFramebuffer **ppFramebuffers, uint32_t framebufferNumber){
 	for(uint32_t i = 0; i < framebufferNumber; i++){
 		vkDestroyFramebuffer(*pDevice, (*ppFramebuffers)[i], VK_NULL_HANDLE);
 	}

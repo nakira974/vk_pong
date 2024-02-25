@@ -1,22 +1,22 @@
 #include "vk_fun.h"
 
-uint32_t getSwapchainImageNumber(VkDevice *pDevice, VkSwapchainKHR *pSwapchain){
+uint32_t swapchain_get_image_number(VkDevice *pDevice, VkSwapchainKHR *pSwapchain){
 	uint32_t swapchainImageNumber;
 	vkGetSwapchainImagesKHR(*pDevice, *pSwapchain, &swapchainImageNumber, VK_NULL_HANDLE);
 	return swapchainImageNumber;
 }
 
-VkImage *getSwapchainImages(VkDevice *pDevice, VkSwapchainKHR *pSwapchain, uint32_t swapchainImageNumber){
+VkImage *swapchain_get_images(VkDevice *pDevice, VkSwapchainKHR *pSwapchain, uint32_t swapchainImageNumber){
 	VkImage *swapchainImages = (VkImage *)malloc(swapchainImageNumber * sizeof(VkImage));
 	vkGetSwapchainImagesKHR(*pDevice, *pSwapchain, &swapchainImageNumber, swapchainImages);
 	return swapchainImages;
 }
 
-void deleteSwapchainImages(VkImage **ppImages){
+void swapchain_destroy_images(VkImage **ppImages){
 	free(*ppImages);
 }
 
-VkImageView *createImageViews(VkDevice *pDevice, VkImage **ppImages, VkSurfaceFormatKHR *pFormat, uint32_t imageNumber, uint32_t imageArrayLayers){
+VkImageView *imageviews_create(VkDevice *pDevice, VkImage **ppImages, VkSurfaceFormatKHR *pFormat, uint32_t imageNumber, uint32_t imageArrayLayers){
 	VkComponentMapping componentMapping = {
 		VK_COMPONENT_SWIZZLE_IDENTITY,
 		VK_COMPONENT_SWIZZLE_IDENTITY,
@@ -52,7 +52,7 @@ VkImageView *createImageViews(VkDevice *pDevice, VkImage **ppImages, VkSurfaceFo
 	return imageViews;
 }
 
-void deleteImageViews(VkDevice *pDevice, VkImageView **ppImageViews, uint32_t imageViewNumber){
+void imageview_destroy(VkDevice *pDevice, VkImageView **ppImageViews, uint32_t imageViewNumber){
 	for(uint32_t i = 0; i < imageViewNumber; i++){
 		vkDestroyImageView(*pDevice, (*ppImageViews)[i], VK_NULL_HANDLE);
 	}

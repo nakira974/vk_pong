@@ -1,22 +1,22 @@
 #include "vk_fun.h"
 
-uint32_t getQueueFamilyNumber(VkPhysicalDevice *pPhysicalDevice){
+uint32_t queue_get_family_number(VkPhysicalDevice *pPhysicalDevice){
 	uint32_t queueFamilyNumber = 0;
 	vkGetPhysicalDeviceQueueFamilyProperties(*pPhysicalDevice, &queueFamilyNumber, VK_NULL_HANDLE);
 	return queueFamilyNumber;
 }
 
-VkQueueFamilyProperties *getQueueFamilyProperties(VkPhysicalDevice *pPhysicalDevice, uint32_t queueFamilyNumber){
+VkQueueFamilyProperties *queue_get_family_properties(VkPhysicalDevice *pPhysicalDevice, uint32_t queueFamilyNumber){
 	VkQueueFamilyProperties *queueFamilyProperties = (VkQueueFamilyProperties *)malloc(queueFamilyNumber * sizeof(VkQueueFamilyProperties));
 	vkGetPhysicalDeviceQueueFamilyProperties(*pPhysicalDevice, &queueFamilyNumber, queueFamilyProperties);
 	return queueFamilyProperties;
 }
 
-void deleteQueueFamilyProperties(VkQueueFamilyProperties **ppQueueFamilyProperties){
+void queue_delete_family_properties(VkQueueFamilyProperties **ppQueueFamilyProperties){
 	free(*ppQueueFamilyProperties);
 }
 
-uint32_t getBestGraphicsQueueFamilyindex(VkQueueFamilyProperties *pQueueFamilyProperties, uint32_t queueFamilyNumber){
+uint32_t queue_get_best_graphics_family_index(VkQueueFamilyProperties *pQueueFamilyProperties, uint32_t queueFamilyNumber){
 	uint32_t graphicsQueueFamilyNumber = 0;
 	uint32_t *graphicsQueueFamilyIndices = (uint32_t *)malloc(queueFamilyNumber * sizeof(uint32_t));
 
@@ -40,7 +40,7 @@ uint32_t getBestGraphicsQueueFamilyindex(VkQueueFamilyProperties *pQueueFamilyPr
 	return bestGraphicsQueueFamilyIndex;
 }
 
-uint32_t getGraphicsQueueMode(VkQueueFamilyProperties *pQueueFamilyProperties, uint32_t graphicsQueueFamilyindex){
+uint32_t queue_get_graphics_mode(VkQueueFamilyProperties *pQueueFamilyProperties, uint32_t graphicsQueueFamilyindex){
 	if(pQueueFamilyProperties[graphicsQueueFamilyindex].queueCount == 1){
 		return 0;
 	}else if(pQueueFamilyProperties[graphicsQueueFamilyindex].queueCount > 1){
@@ -50,13 +50,13 @@ uint32_t getGraphicsQueueMode(VkQueueFamilyProperties *pQueueFamilyProperties, u
 	}
 }
 
-VkQueue getDrawingQueue(VkDevice *pDevice, uint32_t graphicsQueueFamilyindex){
+VkQueue queue_get_drawing(VkDevice *pDevice, uint32_t graphicsQueueFamilyindex){
 	VkQueue drawingQueue = VK_NULL_HANDLE;
 	vkGetDeviceQueue(*pDevice, graphicsQueueFamilyindex, 0, &drawingQueue);
 	return drawingQueue;
 }
 
-VkQueue getPresentingQueue(VkDevice *pDevice, uint32_t graphicsQueueFamilyindex, uint32_t graphicsQueueMode){
+VkQueue queue_get_presentation(VkDevice *pDevice, uint32_t graphicsQueueFamilyindex, uint32_t graphicsQueueMode){
 	VkQueue presentingQueue = VK_NULL_HANDLE;
 	if(graphicsQueueMode == 0){
 		vkGetDeviceQueue(*pDevice, graphicsQueueFamilyindex, 0, &presentingQueue);

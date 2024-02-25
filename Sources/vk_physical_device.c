@@ -1,23 +1,23 @@
 #include "vk_fun.h"
 
-uint32_t getPhysicalDeviceNumber(VkInstance *pInstance){
+uint32_t pdevice_number(VkInstance *pInstance){
 	uint32_t physicalDeviceNumber = 0;
 	vkEnumeratePhysicalDevices(*pInstance, &physicalDeviceNumber, VK_NULL_HANDLE);
 	return physicalDeviceNumber;
 }
 
-VkPhysicalDevice *getPhysicalDevices(VkInstance *pInstance, uint32_t physicalDeviceNumber){
+VkPhysicalDevice *pdevice_get_devices(VkInstance *pInstance, uint32_t physicalDeviceNumber){
 	VkPhysicalDevice *physicalDevices = (VkPhysicalDevice *)malloc(physicalDeviceNumber * sizeof(VkPhysicalDevice));
 	vkEnumeratePhysicalDevices(*pInstance, &physicalDeviceNumber, physicalDevices);
 
 	return physicalDevices;
 }
 
-void deletePhysicalDevices(VkPhysicalDevice **ppPhysicalDevices){
+void pdevice_destroy(VkPhysicalDevice **ppPhysicalDevices){
 	free(*ppPhysicalDevices);
 }
 
-uint32_t getBestPhysicalDeviceIndex(VkPhysicalDevice *pPhysicalDevices, uint32_t physicalDeviceNumber){
+uint32_t pdevice_get_best_index(VkPhysicalDevice *pPhysicalDevices, uint32_t physicalDeviceNumber){
 	VkPhysicalDeviceProperties *physicalDeviceProperties = (VkPhysicalDeviceProperties *)malloc(physicalDeviceNumber * sizeof(VkPhysicalDeviceProperties));
 	VkPhysicalDeviceMemoryProperties *physicalDeviceMemoryProperties = (VkPhysicalDeviceMemoryProperties *)malloc(physicalDeviceNumber * sizeof(VkPhysicalDeviceMemoryProperties));
 

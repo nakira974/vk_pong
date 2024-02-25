@@ -1,6 +1,6 @@
 #include "vk_fun.h"
 
-VkPipelineLayout createPipelineLayout(VkDevice *pDevice){
+VkPipelineLayout pipelineLayout_create(VkDevice *pDevice){
 	VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {
 		VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
 		VK_NULL_HANDLE,
@@ -16,11 +16,11 @@ VkPipelineLayout createPipelineLayout(VkDevice *pDevice){
 	return pipelineLayout;
 }
 
-void deletePipelineLayout(VkDevice *pDevice, VkPipelineLayout *pPipelineLayout){
+void pipelineLayout_destroy(VkDevice *pDevice, VkPipelineLayout *pPipelineLayout){
 	vkDestroyPipelineLayout(*pDevice, *pPipelineLayout, VK_NULL_HANDLE);
 }
 
-VkPipelineShaderStageCreateInfo configureVertexShaderStageCreateInfo(VkShaderModule *pVertexShaderModule, const char *entryName){
+VkPipelineShaderStageCreateInfo vertexShader_configure_stage_createInfo(VkShaderModule *pVertexShaderModule, const char *entryName){
 	VkPipelineShaderStageCreateInfo vertexShaderStageCreateInfo = {
 		VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
 		VK_NULL_HANDLE,
@@ -34,7 +34,7 @@ VkPipelineShaderStageCreateInfo configureVertexShaderStageCreateInfo(VkShaderMod
 	return vertexShaderStageCreateInfo;
 }
 
-VkPipelineShaderStageCreateInfo configureFragmentShaderStageCreateInfo(VkShaderModule *pFragmentShaderModule, const char *entryName){
+VkPipelineShaderStageCreateInfo fragmentShader_configure_stage_createInfo(VkShaderModule *pFragmentShaderModule, const char *entryName){
 	VkPipelineShaderStageCreateInfo fragmentShaderStageCreateInfo = {
 		VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
 		VK_NULL_HANDLE,
@@ -48,7 +48,7 @@ VkPipelineShaderStageCreateInfo configureFragmentShaderStageCreateInfo(VkShaderM
 	return fragmentShaderStageCreateInfo;
 }
 
-VkPipelineVertexInputStateCreateInfo configureVertexInputStateCreateInfo(){
+VkPipelineVertexInputStateCreateInfo vertexInput_configure_state_createInfo(){
 	VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo = {
 		VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
 		VK_NULL_HANDLE,
@@ -62,7 +62,7 @@ VkPipelineVertexInputStateCreateInfo configureVertexInputStateCreateInfo(){
 	return vertexInputStateCreateInfo;
 }
 
-VkPipelineInputAssemblyStateCreateInfo configureInputAssemblyStateCreateInfo(){
+VkPipelineInputAssemblyStateCreateInfo inputAssembly_configure_state_createInfo(){
 	VkPipelineInputAssemblyStateCreateInfo inputAssemblyStateCreateInfo = {
 		VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
 		VK_NULL_HANDLE,
@@ -74,7 +74,7 @@ VkPipelineInputAssemblyStateCreateInfo configureInputAssemblyStateCreateInfo(){
 	return inputAssemblyStateCreateInfo;
 }
 
-VkViewport configureViewport(VkExtent2D *pExtent){
+VkViewport viewport_configure(VkExtent2D *pExtent){
 	VkViewport viewport = {
 		1.0f,
 		1.0f,
@@ -87,7 +87,7 @@ VkViewport configureViewport(VkExtent2D *pExtent){
 	return viewport;
 }
 
-VkRect2D configureScissor(VkExtent2D *pExtent, uint32_t left, uint32_t right, uint32_t up, uint32_t down){
+VkRect2D scissor_configure(VkExtent2D *pExtent, uint32_t left, uint32_t right, uint32_t up, uint32_t down){
 	if(left > pExtent->width){
 		left = pExtent->width;
 	}
@@ -115,7 +115,7 @@ VkRect2D configureScissor(VkExtent2D *pExtent, uint32_t left, uint32_t right, ui
 	return scissor;
 }
 
-VkPipelineViewportStateCreateInfo configureViewportStateCreateInfo(VkViewport *pViewport, VkRect2D *pScissor){
+VkPipelineViewportStateCreateInfo viewport_configure_state_createInfo(VkViewport *pViewport, VkRect2D *pScissor){
 	VkPipelineViewportStateCreateInfo viewportStateCreateInfo = {
 		VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
 		VK_NULL_HANDLE,
@@ -129,7 +129,7 @@ VkPipelineViewportStateCreateInfo configureViewportStateCreateInfo(VkViewport *p
 	return viewportStateCreateInfo;
 }
 
-VkPipelineRasterizationStateCreateInfo configureRasterizationStateCreateInfo(){
+VkPipelineRasterizationStateCreateInfo raterization_configure_state_createInfo(){
 	VkPipelineRasterizationStateCreateInfo rasterizationStateCreateInfo = {
 		VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
 		VK_NULL_HANDLE,
@@ -149,7 +149,7 @@ VkPipelineRasterizationStateCreateInfo configureRasterizationStateCreateInfo(){
 	return rasterizationStateCreateInfo;
 }
 
-VkPipelineMultisampleStateCreateInfo configureMultisampleStateCreateInfo(){
+VkPipelineMultisampleStateCreateInfo multisample_configure_state_createInfo(){
 	VkPipelineMultisampleStateCreateInfo multisampleStateCreateInfo = {
 		VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
 		VK_NULL_HANDLE,
@@ -165,7 +165,7 @@ VkPipelineMultisampleStateCreateInfo configureMultisampleStateCreateInfo(){
 	return multisampleStateCreateInfo;
 }
 
-VkPipelineColorBlendAttachmentState configureColorBlendAttachmentState(){
+VkPipelineColorBlendAttachmentState colorBlend_configure_attachment_state(){
 	VkPipelineColorBlendAttachmentState colorBlendAttachmentState = {
 		VK_FALSE,
 		VK_BLEND_FACTOR_ONE,
@@ -180,7 +180,7 @@ VkPipelineColorBlendAttachmentState configureColorBlendAttachmentState(){
 	return colorBlendAttachmentState;
 }
 
-VkPipelineColorBlendStateCreateInfo configureColorBlendStateCreateInfo(VkPipelineColorBlendAttachmentState *pColorBlendAttachmentState){
+VkPipelineColorBlendStateCreateInfo colorBlend_configure_state_createInfo(VkPipelineColorBlendAttachmentState *pColorBlendAttachmentState){
 	VkPipelineColorBlendStateCreateInfo colorBlendStateCreateInfo = {
 		VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
 		VK_NULL_HANDLE,
@@ -195,22 +195,23 @@ VkPipelineColorBlendStateCreateInfo configureColorBlendStateCreateInfo(VkPipelin
 	return colorBlendStateCreateInfo;
 }
 
-VkPipeline createGraphicsPipeline(VkDevice *pDevice, VkPipelineLayout *pPipelineLayout, VkShaderModule *pVertexShaderModule, VkShaderModule *pFragmentShaderModule, VkRenderPass *pRenderPass, VkExtent2D *pExtent){
+VkPipeline gpipeline_create(VkDevice *pDevice, VkPipelineLayout *pPipelineLayout, VkShaderModule *pVertexShaderModule, VkShaderModule *pFragmentShaderModule, VkRenderPass *pRenderPass, VkExtent2D *pExtent){
 	char entryName[] = "main";
 
 	VkPipelineShaderStageCreateInfo shaderStageCreateInfo[] = {
-		configureVertexShaderStageCreateInfo(pVertexShaderModule, entryName),
-		configureFragmentShaderStageCreateInfo(pFragmentShaderModule, entryName)
+            vertexShader_configure_stage_createInfo(pVertexShaderModule, entryName),
+            fragmentShader_configure_stage_createInfo(pFragmentShaderModule, entryName)
 	};
-	VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo = configureVertexInputStateCreateInfo();
-	VkPipelineInputAssemblyStateCreateInfo inputAssemblyStateCreateInfo = configureInputAssemblyStateCreateInfo();
-	VkViewport viewport = configureViewport(pExtent);
-	VkRect2D scissor = configureScissor(pExtent, 0, 0, 0, 0);
-	VkPipelineViewportStateCreateInfo viewportStateCreateInfo = configureViewportStateCreateInfo(&viewport, &scissor);
-	VkPipelineRasterizationStateCreateInfo rasterizationStateCreateInfo = configureRasterizationStateCreateInfo();
-	VkPipelineMultisampleStateCreateInfo multisampleStateCreateInfo = configureMultisampleStateCreateInfo();
-	VkPipelineColorBlendAttachmentState colorBlendAttachmentState = configureColorBlendAttachmentState();
-	VkPipelineColorBlendStateCreateInfo colorBlendStateCreateInfo = configureColorBlendStateCreateInfo(&colorBlendAttachmentState);
+	VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo = vertexInput_configure_state_createInfo();
+	VkPipelineInputAssemblyStateCreateInfo inputAssemblyStateCreateInfo = inputAssembly_configure_state_createInfo();
+	VkViewport viewport = viewport_configure(pExtent);
+	VkRect2D scissor = scissor_configure(pExtent, 0, 0, 0, 0);
+	VkPipelineViewportStateCreateInfo viewportStateCreateInfo = viewport_configure_state_createInfo(&viewport, &scissor);
+	VkPipelineRasterizationStateCreateInfo rasterizationStateCreateInfo = raterization_configure_state_createInfo();
+	VkPipelineMultisampleStateCreateInfo multisampleStateCreateInfo = multisample_configure_state_createInfo();
+	VkPipelineColorBlendAttachmentState colorBlendAttachmentState = colorBlend_configure_attachment_state();
+	VkPipelineColorBlendStateCreateInfo colorBlendStateCreateInfo = colorBlend_configure_state_createInfo(
+            &colorBlendAttachmentState);
 
 	VkGraphicsPipelineCreateInfo graphicsPipelineCreateInfo = {
 		VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
@@ -239,6 +240,6 @@ VkPipeline createGraphicsPipeline(VkDevice *pDevice, VkPipelineLayout *pPipeline
 	return graphicsPipeline;
 }
 
-void deleteGraphicsPipeline(VkDevice *pDevice, VkPipeline *pGraphicsPipeline){
+void gpipeline_destroy(VkDevice *pDevice, VkPipeline *pGraphicsPipeline){
 	vkDestroyPipeline(*pDevice, *pGraphicsPipeline, VK_NULL_HANDLE);
 }

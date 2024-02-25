@@ -1,6 +1,6 @@
 #include "vk_fun.h"
 
-VkSemaphore *createSemaphores(VkDevice *pDevice, uint32_t maxFrames){
+VkSemaphore *semaphores_create(VkDevice *pDevice, uint32_t maxFrames){
 	VkSemaphoreCreateInfo semaphoreCreateInfo = {
 		VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
 		VK_NULL_HANDLE,
@@ -14,14 +14,14 @@ VkSemaphore *createSemaphores(VkDevice *pDevice, uint32_t maxFrames){
 	return semaphore;
 }
 
-void deleteSemaphores(VkDevice *pDevice, VkSemaphore **ppSemaphores, uint32_t maxFrames){
+void semaphores_destroy(VkDevice *pDevice, VkSemaphore **ppSemaphores, uint32_t maxFrames){
 	for(uint32_t i = 0; i < maxFrames; i++){
 		vkDestroySemaphore(*pDevice, (*ppSemaphores)[i], VK_NULL_HANDLE);
 	}
 	free(*ppSemaphores);
 }
 
-VkFence *createFences(VkDevice *pDevice, uint32_t maxFrames){
+VkFence *fences_create(VkDevice *pDevice, uint32_t maxFrames){
 	VkFenceCreateInfo fenceCreateInfo = {
 		VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
 		VK_NULL_HANDLE,
@@ -35,7 +35,7 @@ VkFence *createFences(VkDevice *pDevice, uint32_t maxFrames){
 	return fence;
 }
 
-void deleteFences(VkDevice *pDevice, VkFence **ppFences, uint32_t maxFrames){
+void fences_destroy(VkDevice *pDevice, VkFence **ppFences, uint32_t maxFrames){
 	for(uint32_t i = 0; i < maxFrames; i++){
 		vkDestroyFence(*pDevice, (*ppFences)[i], VK_NULL_HANDLE);
 	}
@@ -50,6 +50,6 @@ VkFence *createEmptyFences(uint32_t maxFrames){
 	return fence;
 }
 
-void deleteEmptyFences(VkFence **ppFences){
+void fences_destroy_empty(VkFence **ppFences){
 	free(*ppFences);
 }

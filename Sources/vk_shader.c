@@ -1,6 +1,6 @@
 #include "vk_fun.h"
 
-char *getShaderCode(const char *fileName, uint32_t *pShaderSize){
+char *shader_get_code(const char *fileName, uint32_t *pShaderSize){
 	if(pShaderSize == VK_NULL_HANDLE){
 		return VK_NULL_HANDLE;
 	}
@@ -20,11 +20,11 @@ char *getShaderCode(const char *fileName, uint32_t *pShaderSize){
 	return shaderCode;
 }
 
-void deleteShaderCode(char **ppShaderCode){
+void shader_destroy_code(char **ppShaderCode){
 	free(*ppShaderCode);
 }
 
-VkShaderModule createShaderModule(VkDevice *pDevice, char *pShaderCode, uint32_t shaderSize){
+VkShaderModule shader_create_module(VkDevice *pDevice, char *pShaderCode, uint32_t shaderSize){
 	VkShaderModuleCreateInfo shaderModuleCreateInfo = {
 		VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
 		VK_NULL_HANDLE,
@@ -38,6 +38,6 @@ VkShaderModule createShaderModule(VkDevice *pDevice, char *pShaderCode, uint32_t
 	return shaderModule;
 }
 
-void deleteShaderModule(VkDevice *pDevice, VkShaderModule *pShaderModule){
+void shader_destroy_module(VkDevice *pDevice, VkShaderModule *pShaderModule){
 	vkDestroyShaderModule(*pDevice, *pShaderModule, VK_NULL_HANDLE);
 }

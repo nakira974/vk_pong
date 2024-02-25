@@ -11,12 +11,12 @@
  * @param title The title of the window
  * @return A pointer to the created Vulkan window
  */
-GLFWwindow *createVulkanWindow(int width, int height, const char *title);
+GLFWwindow *window_create(int width, int height, const char *title);
 
 /**
  * @brief Deletes a Vulkan window created with GLFW.
  * @param pWindow Pointer to the Vulkan window to be deleted
  */
-void deleteWindow(GLFWwindow *pWindow);
+void window_destroy(GLFWwindow *pWindow);
 
 #endif // GLFW_FUN_H

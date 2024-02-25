@@ -15,6 +15,7 @@ void signal_handler(int signal) {
         exit(1);
     }
 }
+
 LogLevel logLevel;
 FILE * console;
 

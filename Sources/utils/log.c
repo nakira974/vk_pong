@@ -24,6 +24,7 @@ void to_lower_case(char* str){
 }
 void log_process_args(int argc, char * argv[]){
     for(int i =1;i<argc;i++){
+        to_lower_case(argv[i]);
         if(strcmp(argv[i], "--verbosity") == 0){
             // Check if next argument exists
             if(i+1 < argc){

@@ -10,7 +10,19 @@
 #include "std_c.h"
 #include "ext.h"
 #include "log.h"
+#include "stdbool.h"
 
+#define VALIDATION_LAYERS_COUNT 1
+#ifdef NDEBUG
+static bool enableValidationLayers = false;
+#else
+static bool enableValidationLayers = true;
+#endif
+
+/**
+ * Activate all LunarG SDK validation layers
+ */
+static const char* validationLayers[VALIDATION_LAYERS_COUNT] = {"VK_LAYER_KHRONOS_validation"};
 /**
  * @brief Create a Vulkan instance to link current application with API
  * @param app_name Application name
@@ -27,6 +39,11 @@ VkInstance createInstance(const char * app_name,uint32_t app_version, const char
  */
 void deleteInstance(VkInstance *pInstance);
 
+/**
+ * @brief Check if the validation layers that we want to use are available
+ * @return true if validation layers are available, otherwise false
+ */
+bool checkValidationSupport();
 /**
  * @brief Fetch the current count of physical devices
  * @param pInstance Application Vulkan instance

@@ -10,8 +10,47 @@ void instance_exception() {
     longjmp(exitJump, 1);
 }
 
+bool checkValidationSupport(){
+    uint32_t layer_count;
+    vkEnumerateInstanceLayerProperties(&layer_count, VK_NULL_HANDLE);
+    VkLayerProperties  *layerProperties;
+    if((layerProperties = (VkLayerProperties*) malloc(layer_count * sizeof(VkLayerProperties))) == NULL){
+        free(layerProperties);
+        log_write(ERR,"vk_instance", "VkValidationLayersException : Validation layers activated but unavailable!");
+        return false;
+    }
+
+    vkEnumerateInstanceLayerProperties(&layer_count, layerProperties);
+    for(int i =0;i<VALIDATION_LAYERS_COUNT;i++){
+        const char * validation_layer_name = validationLayers[i];
+        bool layer_found = false;
+        for(int j=0;j<layer_count;j++){
+            if (strcmp(validation_layer_name, layerProperties[j].layerName) == 0) {
+                char line_buffer[256];
+                sprintf(line_buffer, "Validation layer : %s has been found", validation_layer_name);
+                log_write(DEBUG, "vk_instance",line_buffer);
+                layer_found = true;
+                break;
+            }
+        }
+        if(!layer_found){
+            free(layerProperties);
+            return false;
+        }
+    }
+    free(layerProperties);
+    return true;
+}
+
 VkInstance createInstance(const char * app_name, uint32_t app_version, const char * engine_name, uint32_t engine_version){
     if (setjmp(exitJump) == 0) {
+
+        if(enableValidationLayers){
+            if (!checkValidationSupport()) {
+                log_write(FATAL, "vk_instance", "VkValidationLayerException : Error, validations are activated but not available on the current platform!");
+                instance_exception();
+            }
+        }
         VkApplicationInfo applicationInfo = {
                 VK_STRUCTURE_TYPE_APPLICATION_INFO,
                 VK_NULL_HANDLE,

@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(Vulkan\ Triangle)
 
+set(CMAKE_PROJECT_NAME vk_pong)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
+
+project(${CMAKE_PROJECT_NAME} C)
 
 find_file(console NAMES "${CMAKE_CURRENT_BINARY_DIR}/console.log")
 if(console)
@@ -23,7 +25,7 @@ file(GLOB_RECURSE SOURCES_FILES
 )
 include_directories(${PROJECT_SOURCE_DIR}/Headers)
 
-add_executable(vulkan-triangle ${SOURCES_FILES})
+add_executable(${CMAKE_PROJECT_NAME} ${SOURCES_FILES} main.c)
 
 if(UNIX AND NOT APPLE)
 	#[[
@@ -36,7 +38,7 @@ if(UNIX AND NOT APPLE)
 
 		based on your build directories
 	]]
-	target_link_libraries(vulkan-triangle
+	target_link_libraries(${CMAKE_PROJECT_NAME}
 		/usr/lib/libvulkan.so
 		/usr/lib/libglfw.so
 		/usr/lib/libm.so)
@@ -55,18 +57,18 @@ elseif(WIN32)
 
 		based on your install directories
 	]]
-	target_include_directories(vulkan-triangle PRIVATE
+	target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 			${VULKAN_BASE_PATH}/Include
 			${GLFW_BASE_PATH}/include)
 
-	target_link_libraries(vulkan-triangle
+	target_link_libraries(${CMAKE_PROJECT_NAME}
 		${VULKAN_BASE_PATH}/Lib/vulkan-1.lib
 		${GLFW_BASE_PATH}/lib-mingw-w64/libglfw3dll.a)
 		# if you're using Visual C++ 2019, add '#' to the line above
 		# and delete '#' from the line below
 		#C:/glfw/lib-vc2019/libglfw3dll.a)
 
-	target_link_options(vulkan-triangle PRIVATE
+	target_link_options(${CMAKE_PROJECT_NAME} PRIVATE
 		-mwindows)
 endif()
 
@@ -88,7 +90,7 @@ add_custom_target(triangle_fragment.spv
 	# and delete '#' from the line below
 	#COMMAND glslangValidator --quiet -V ${CMAKE_SOURCE_DIR}/Shaders/triangle.frag -o ${CMAKE_BINARY_DIR}/Debug/Shaders/triangle_fragment.spv)
 
-add_dependencies(vulkan-triangle
+add_dependencies(${CMAKE_PROJECT_NAME}
 	Shaders
 	triangle_vertex.spv
 	triangle_fragment.spv)
@@ -104,6 +106,6 @@ if(WIN32)
 		# and delete '#' from the line below
 		#COMMAND ${CMAKE_COMMAND} -E copy C:/glfw/lib-vc2019/glfw3.dll ${CMAKE_BINARY_DIR}/Debug/)
 
-	add_dependencies(vulkan-triangle
+	add_dependencies(${CMAKE_PROJECT_NAME}
 		glfw3.dll)
 endif()

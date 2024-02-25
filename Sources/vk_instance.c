@@ -45,6 +45,7 @@ bool checkValidationSupport(){
 VkInstance createInstance(const char * app_name, uint32_t app_version, const char * engine_name, uint32_t engine_version){
     if (setjmp(exitJump) == 0) {
 
+        // Si on est en build debug on lance le check des validation layers LunarG du SDK
         if(enableValidationLayers){
             if (!checkValidationSupport()) {
                 log_write(FATAL, "vk_instance", "VkValidationLayerException : Error, validations are activated but not available on the current platform!");

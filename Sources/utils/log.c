@@ -74,5 +74,6 @@ void log_write(LogLevel level, const char *caller, const char *message){
 
             fclose(console);
         }
+        pthread_mutex_destroy(&mutex);
     }
 }

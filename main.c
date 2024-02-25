@@ -1,6 +1,13 @@
+/**
+ * @file main.c
+ * @brief This file contains the program main loop and entry point
+ * @authors lonelydevil nakira974
+ * @date 24/02/2024
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <pthread.h>
 
 #include "std_c.h"
 #include "ext.h"
@@ -20,11 +27,23 @@ LogLevel logLevel;
 FILE * console;
 
 int main(int argc, char * argv[]) {
+    pthread_mutex_t main_thread_mutex = PTHREAD_MUTEX_INITIALIZER;
+
     // Default app log level
     logLevel =QUIET;
     if(argc>0 && argv != NULL){
         // Arguments processing
         log_process_args(argc, argv);
+    }
+    if(logLevel!=QUIET){
+        // Création d'une nouvelle séquence de log
+        console = fopen("console.log", "a");
+        if(console != NULL){
+            pthread_mutex_lock(&main_thread_mutex);
+            fprintf(console,"\n");
+            pthread_mutex_unlock(&main_thread_mutex);
+            fclose(console);
+        }
     }
     signal(SIGTERM, signal_handler);
     glfwInit();
@@ -80,6 +99,7 @@ int main(int argc, char * argv[]) {
         deleteDevice(&device);
         deletePhysicalDevices(&physicalDevices);
         deleteInstance(&instance);
+        pthread_mutex_destroy(&main_thread_mutex);
 
         raise(SIGTERM);
     }
@@ -141,6 +161,7 @@ int main(int argc, char * argv[]) {
         deleteDevice(&device);
         deletePhysicalDevices(&physicalDevices);
         deleteInstance(&instance);
+        pthread_mutex_destroy(&main_thread_mutex);
 
         raise(SIGTERM);
     }
@@ -170,8 +191,9 @@ int main(int argc, char * argv[]) {
         deleteDevice(&device);
         deletePhysicalDevices(&physicalDevices);
         deleteInstance(&instance);
+        pthread_mutex_destroy(&main_thread_mutex);
 
-        return 1;
+        raise(SIGTERM);
     }
     // Création d'un module shader pour notre fragment shader
     VkShaderModule fragmentShaderModule = createShaderModule(&device, fragmentShaderCode, fragmentShaderSize);
@@ -236,8 +258,8 @@ int main(int argc, char * argv[]) {
     deleteDevice(&device);
     deletePhysicalDevices(&physicalDevices);
     deleteInstance(&instance);
-
     glfwTerminate();
+    pthread_mutex_destroy(&main_thread_mutex);
 
     log_write(DEBUG, "vk_pong", "Program finished correctly");
     return 0;
